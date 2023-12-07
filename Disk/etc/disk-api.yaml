@@ -1,3 +1,8 @@
 Name: Disk-api
 Host: 0.0.0.0
 Port: 8888
+
+
+
+Redis:
+  Addr: localhost:6379

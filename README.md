@@ -5,4 +5,7 @@
 goctl api new Disk
 启动项目
 go run disk.go -f etc/disk-api.yaml
+更新api接口
+goctl api -api Disk.api -dir . -style go_zero
 ```
+

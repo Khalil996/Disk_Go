@@ -1,9 +1,35 @@
 syntax = "v1"
 
-info(
-    title: "type title here"
-    desc: "type desc here"
-    author: "type author here"
-    email: "type email here"
-    version: "type version here"
+type (
+    loginReq {
+        Name     string `json:"name"`
+        Password string `json:"password"`
+    }
+    loginRes {
+        Token string `json:"token"`
+        RefreshToken string `json:"refresh_token"`
+    }
+
+    registerReq {
+        //用户名
+        Name string `json:"name"`
+        // 密码
+        Password string `json:"password"`
+        // 手机号
+        Phone string `json:"phone"`
+        // 邮箱
+        Email string `json:"email"`
+        // 验证码
+        Code string `json:"code"`
+        //性别
+        Gender int `json:"gender"`
+        //头像
+        Avatar string `json:"avatar"`
+    }
+    registerRes {}
+
+    EmailSendReq {
+        Email string `json:"email"`
+    }
+    EmailSendRes {}
 )

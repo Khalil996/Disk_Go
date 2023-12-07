@@ -1,14 +1,14 @@
 syntax = "v1"
 
-type Request {
-	Name string `path:"name,options=you|me"`
-}
-
-type Response {
-	Message string `json:"message"`
-}
+import "struct/Authentication.api"
 
 service Disk-api {
-	@handler DiskHandler
-	get /from/:name(Request) returns (Response)
+	@handler login
+	post /login (loginReq)returns(loginRes)
+	
+	@handler register
+	post /register (registerReq)returns(registerRes)
+	
+	@handler EmailSend
+	post /EmailSend (EmailSendReq)returns(EmailSendRes)
 }
