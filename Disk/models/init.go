@@ -10,7 +10,7 @@ var Engine = Init()
 var RDB = InitRedis()
 
 func Init() *xorm.Engine {
-	engine, err := xorm.NewEngine("mysql", "root:123456@tcp(127.0.0.1:3306)/disk_go?charset=utf8mb4&parseTime=True&loc=Local")
+	engine, err := xorm.NewEngine("mysql", "root:Khalil996!@tcp(127.0.0.1:3306)/disk_go?charset=utf8mb4&parseTime=True&loc=Local")
 	if err != nil {
 		panic(err)
 	}

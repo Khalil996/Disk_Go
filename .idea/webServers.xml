@@ -9,6 +9,13 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="2f66c48e-629d-47d1-a742-7ba4b89ccfad" name="Disk">
+        <fileTransfer rootFolder="/root/go/Disk_go" accessType="SFTP" host="120.55.52.9" port="22" sshConfigId="e49cc5ef-12ea-4382-aa0d-3ef209de3a4d" sshConfig="root@120.55.52.9:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

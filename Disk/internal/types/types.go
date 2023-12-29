@@ -30,3 +30,13 @@ type EmailSendReq struct {
 
 type EmailSendRes struct {
 }
+
+type UpdateUserDetailReq struct {
+}
+
+type GetUserDetailReq struct {
+	UserId int64 `path:"userId"`
+}
+
+type UpdateAvatarReq struct {
+}

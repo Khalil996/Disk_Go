@@ -2,7 +2,11 @@ Name: Disk-api
 Host: 0.0.0.0
 Port: 8888
 
-
+Minio:
+  MinioPort: 0.0.0.0:9000
+  MinioAccessKey: 7gzvhbQeqCJvyenkkdEj
+  MinioSecretKey: uOWzWnpho5nDwyYDm20pohiTcRzI3RfOaviBBVlH
+  MinioBucket: disk
 
 Redis:
-  Addr: localhost:6379
+  Addr: 0.0.0.0:6379

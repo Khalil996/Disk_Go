@@ -1,6 +1,7 @@
 syntax = "v1"
 
-import "struct/Authentication.api"
+import ("struct/Authentication.api"
+"struct/user.api")
 
 service Disk-api {
 	@handler login
@@ -11,4 +12,20 @@ service Disk-api {
 	
 	@handler EmailSend
 	post /EmailSend (EmailSendReq)returns(EmailSendRes)
+}
+
+@server(
+	group: user
+	prefix: /user
+	middleware: Auth
+)
+service Disk-api {
+	@handler updateDetail
+	post /detail (updateUserDetailReq) returns ()
+	
+	@handler getDetail
+	get /detail (getUserDetailReq) returns ()
+	
+	@handler updateAvatar
+	post /avatar (updateAvatarReq) returns ()
 }
