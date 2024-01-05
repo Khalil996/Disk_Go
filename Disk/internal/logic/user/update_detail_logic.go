@@ -1,7 +1,9 @@
 package user
 
 import (
+	"cloud_go/Disk/models"
 	"context"
+	"errors"
 
 	"cloud_go/Disk/internal/svc"
 	"cloud_go/Disk/internal/types"
@@ -23,8 +25,23 @@ func NewUpdateDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upda
 	}
 }
 
-func (l *UpdateDetailLogic) UpdateDetail(req *types.UpdateUserDetailReq) error {
+func (l *UpdateDetailLogic) UpdateDetail(req *types.UpdateUserDetailReq) (resp *types.UpdateUserDetailRes, err error) {
 	// todo: add your logic here and delete this line
-
-	return nil
+	user := new(models.UserBasic)
+	sign, err := l.svcCtx.Engine.Where("id=?", req.UserId).Get(user)
+	if err != nil {
+		return nil, err
+	}
+	if !sign {
+		return nil, errors.New("user not found")
+	}
+	user.Phone = req.Phone
+	user.Gender = req.Gender
+	_, err = l.svcCtx.Engine.ID(req.UserId).Update(user)
+	if err != nil {
+		return nil, err
+	}
+	resp.Phone = req.Phone
+	resp.Gender = req.Gender
+	return
 }
