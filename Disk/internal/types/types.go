@@ -32,11 +32,33 @@ type EmailSendRes struct {
 }
 
 type UpdateUserDetailReq struct {
+	UserId int64  `json:"id"`
+	Phone  string `json:"phone"`
+	Gender int    `json:"gender"`
+}
+
+type UpdateUserDetailRes struct {
+	Phone  string `json:"phone"`
+	Gender int    `json:"gender"`
 }
 
 type GetUserDetailReq struct {
-	UserId int64 `path:"userId"`
+	UserId int64 `json:"id"`
+}
+
+type GetUserDetailRes struct {
+	Name   string `json:"name"`
+	Phone  string `json:"phone"`
+	Email  string `json:"email"`
+	Avatar string `json:"avatar"`
+	Gender int    `json:"gender"`
 }
 
 type UpdateAvatarReq struct {
+	UserId int64  `json:"id"`
+	Avatar string `json:"avatar"`
+}
+
+type UpdateAvatarRes struct {
+	Avatar string `json:"avatar"`
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cloud_go/Disk/internal/middleware"
 	"flag"
 	"fmt"
 
@@ -22,6 +23,7 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
+	server.Use(middleware.NewAuthMiddleware().Handle)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
