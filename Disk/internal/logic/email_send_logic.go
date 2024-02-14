@@ -3,13 +3,12 @@ package logic
 import (
 	"cloud_go/Disk/common"
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/svc"
+	"cloud_go/Disk/internal/types"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
 	"time"
-
-	"cloud_go/Disk/internal/svc"
-	"cloud_go/Disk/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,7 +29,7 @@ func NewEmailSendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailSe
 
 func (l *EmailSendLogic) EmailSend(req *types.EmailSendReq) (resp *types.EmailSendRes, err error) {
 	// todo: add your logic here and delete this line
-	cnt, err := models.Engine.Where("email=?", req.Email).Count(new(models.UserBasic))
+	cnt, err := l.svcCtx.Engine.Where("email=?", req.Email).Count(new(models.UserBasic))
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +39,7 @@ func (l *EmailSendLogic) EmailSend(req *types.EmailSendReq) (resp *types.EmailSe
 	}
 
 	code := common.RandCode()
-	models.RDB.Set(l.ctx, req.Email, code, time.Second*time.Duration(define.CodeExpire))
+	l.svcCtx.RDB.Set(l.ctx, req.Email, code, time.Second*time.Duration(define.CodeExpire))
 	err = common.SendCode(req.Email, code)
 	return
 }

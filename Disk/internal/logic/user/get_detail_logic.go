@@ -36,7 +36,7 @@ func (l *GetDetailLogic) GetDetail(req *types.GetUserDetailReq) (resp *types.Get
 	if !has {
 		return nil, errors.New("user not found")
 	}
-	resp.Name = user.Name
+	resp.Name = user.UserName
 	resp.Email = user.Email
 	resp.Phone = user.Phone
 	resp.Avatar = user.Avatar

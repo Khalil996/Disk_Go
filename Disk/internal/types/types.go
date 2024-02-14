@@ -62,3 +62,107 @@ type UpdateAvatarReq struct {
 type UpdateAvatarRes struct {
 	Avatar string `json:"avatar"`
 }
+
+type ParentFolderIdReq struct {
+	ParentFolderId int `path:"parentFolderId"`
+}
+
+type IdPathReq struct {
+	Id int `path:"id"`
+}
+
+type FileTypeReq struct {
+	FileType int `path:"fileType"`
+}
+
+type ListFolderMovableFolderReq struct {
+	ParentFolderId    int   `json:"parentFolderId"`
+	SelectedFolderIds []int `json:"selectedFolderIds"`
+}
+
+type MoveFilesReq struct {
+	FolderId int `json:"folderId"`
+	RecoverFilesReq
+}
+
+type MoveFoldersReq struct {
+	FolderId int `json:"folderId"`
+	RecoverFoldersReq
+}
+
+type UpdateFilesReq struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type UpdateFoldersReq struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+type CopyFilesReq struct {
+	FolderId int `path:"folderId"`
+	RecoverFilesReq
+}
+
+type DeleteFilesReq struct {
+	Ids []int `json:"ids"`
+}
+
+type DeleteFoldersReq struct {
+	Ids []int `json:"ids"`
+}
+
+type RecoverFoldersReq struct {
+	FolderIds []int `json:"folderIds"`
+}
+
+type RecoverFilesReq struct {
+	FileIds []int `json:"fileIds"`
+}
+
+type CreateFoldersReq struct {
+	Name           string `json:"name"`
+	ParentFolderId int    `json:"parentFolderId"`
+}
+
+type FileRes struct {
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Url      string `json:"url"`
+	Status   int    `json:"status"`
+	Size     int    `json:"size"`
+	FolderId int    `json:"folderId,omitempty"`
+	Created  string `json:"created"`
+	Updated  string `json:"updated"`
+}
+
+type ListFolderRes struct {
+	Id      int    `json:"id"`
+	Name    string `json:"name"`
+	Updated string `json:"updated,omitempty"`
+}
+
+type ListDeleteItemsRes struct {
+	Folders []*ListDeletedFolderStruct `json:"folders"`
+	Files   []*ListDeletedFileStruct   `json:"files"`
+}
+
+type ListFolderStruct struct {
+	Id      int    `json:"id"`
+	Name    string `json:"name"`
+	Updated string `json:"updated,omitempty"`
+}
+
+type ListDeletedFolderStruct struct {
+	Id      int    `json:"id"`
+	Name    string `json:"name"`
+	DelTime int    `json:"delTime"`
+}
+
+type ListDeletedFileStruct struct {
+	Id      int    `json:"id"`
+	Name    string `json:"name"`
+	Url     string `json:"url"`
+	DelTime int    `json:"delTime"`
+}

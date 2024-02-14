@@ -37,7 +37,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		err = errors.New("验证码不一致")
 		return nil, err
 	}
-	cnt, err := l.svcCtx.Engine.Where("name = ?", req.Name).Count(new(models.UserBasic))
+	cnt, err := l.svcCtx.Engine.Where("username = ?", req.Name).Count(new(models.UserBasic))
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		return nil, err
 	}
 	user := &models.UserBasic{
-		Name:     req.Name,
+		UserName: req.Name,
 		Password: common.MD5(req.Password),
 		Email:    req.Email,
 		Phone:    req.Phone,

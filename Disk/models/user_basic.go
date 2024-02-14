@@ -10,7 +10,7 @@ type Model struct {
 }
 type UserBasic struct {
 	Model    `xorm:"extends"`
-	Name     string `xorm:"varchar(25) notnull unique 'name' comment('姓名')"`
+	UserName string `xorm:"varchar(25) notnull unique 'username' comment('姓名')"`
 	Password string `xorm:"varchar(255) notnull unique 'password' comment('密码')"`
 	Email    string `xorm:"varchar(25) notnull unique 'email' comment('邮箱')" `
 	Phone    string `valid:"matches(^1[3-9]{1}\\d{9}$)"`

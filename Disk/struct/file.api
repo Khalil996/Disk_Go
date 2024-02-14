@@ -1,0 +1,101 @@
+syntax = "v1"
+// 定义请求结构体
+type (
+    parentFolderIdReq{
+        ParentFolderId int `path:"parentFolderId"`
+    }
+    IdPathReq{
+        Id int `path:"id"`
+    }
+    fileTypeReq{
+        FileType int `path:"fileType"`
+    }
+    ListFolderMovableFolderReq {
+        ParentFolderId int `json:"parentFolderId"`
+        SelectedFolderIds []int `json:"selectedFolderIds"`
+    }
+    moveFilesReq{
+        FolderId int `json:"folderId"`
+        recoverFilesReq
+    }
+    moveFoldersReq{
+        FolderId int `json:"folderId"`
+        recoverFoldersReq
+    }
+    updateFilesReq{
+        Id int `json:"id"`
+        Name string `json:"name"`
+    }
+    updateFoldersReq{
+        Id int `json:"id"`
+        Name string `json:"name"`
+    }
+    copyFilesReq{
+        FolderId int `path:"folderId"`
+        recoverFilesReq
+    }
+    deleteFilesReq{
+        Ids []int `json:"ids"`
+    }
+    deleteFoldersReq{
+        Ids []int `json:"ids"`
+    }
+    recoverFoldersReq{
+        FolderIds []int `json:"folderIds"`
+    }
+
+    recoverFilesReq{
+        FileIds []int `json:"fileIds"`
+    }
+    createFoldersReq{
+        name string `json:"name"`
+        parentFolderId int `json:"parentFolderId"`
+    }
+)
+// 定义响应结构体
+type (
+    fileRes{
+        Id int `json:"id"`
+        Name string `json:"name"`
+        Url string `json:"url"`
+        Status int `json:"status"`
+        Size int `json:"size"`
+        FolderId int `json:"folderId,omitempty"`
+        Created string `json:"created"`
+        Updated string `json:"updated"`
+    }
+
+    listFolderRes{
+        Id int `json:"id"`
+        Name string `json:"name"`
+        Updated string `json:"updated,omitempty"`
+    }
+
+    listDeleteItemsRes{
+        Folders []*ListDeletedFolderStruct `json:"folders"`
+        Files []*ListDeletedFileStruct `json:"files"`
+    }
+)
+
+type (
+    ListFolderStruct {
+        Id int `json:"id"`
+        Name string `json:"name"`
+        Updated string `json:"updated,omitempty"`
+    }
+
+    ListDeletedFolderStruct {
+        Id int `json:"id"`
+        Name string `json:"name"`
+        DelTime int `json:"delTime"`
+    }
+
+    ListDeletedFileStruct {
+        Id int `json:"id"`
+        Name string `json:"name"`
+        Url string `json:"url"`
+        DelTime int `json:"delTime"`
+    }
+
+
+)

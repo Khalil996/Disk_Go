@@ -30,7 +30,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginRes, err error) {
 	// todo: add your logic here and delete this line
 	user := new(models.UserBasic)
-	sign, err := l.svcCtx.Engine.Where("name =? and password=?", req.Name, common.MD5(req.Password)).Get(user)
+	sign, err := l.svcCtx.Engine.Where("username =? and password=?", req.Name, common.MD5(req.Password)).Get(user)
 	if err != nil {
 		return nil, err
 	}
@@ -38,11 +38,11 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginRes, err error
 		err = errors.New("账号密码错误")
 		return nil, err
 	}
-	token, err := common.GenerateToken(user.Id, user.Name, define.TokenExpire)
+	token, err := common.GenerateToken(user.Id, user.UserName, define.TokenExpire)
 	if err != nil {
 		return nil, err
 	}
-	refreshToken, err := common.GenerateToken(user.Id, user.Name, define.RefreshTokenExpire)
+	refreshToken, err := common.GenerateToken(user.Id, user.UserName, define.RefreshTokenExpire)
 	if err != nil {
 		return nil, err
 	}

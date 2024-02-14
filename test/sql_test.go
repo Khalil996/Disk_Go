@@ -2,6 +2,7 @@ package test
 
 import (
 	"cloud_go/Disk/models"
+	_ "github.com/go-sql-driver/mysql"
 	"testing"
 	"xorm.io/xorm"
 )
@@ -16,6 +17,18 @@ func TestMysqlTest(t *testing.T) {
 		panic(err)
 	}
 	err = engine.CreateTables(models.File{})
+	if err != nil {
+		panic(err)
+	}
+	err = engine.CreateTables(models.FileSchedule{})
+	if err != nil {
+		panic(err)
+	}
+	err = engine.CreateTables(models.Folder{})
+	if err != nil {
+		panic(err)
+	}
+	err = engine.CreateTables(models.FileFs{})
 	if err != nil {
 		panic(err)
 	}
