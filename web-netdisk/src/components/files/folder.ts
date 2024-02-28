@@ -13,7 +13,7 @@ export function listFoldersByParentFolderId(parentFolderId: number) {
 }
 
 export function createFolder(parentFolderId: number, name: string) {
-    return api.post<any, Resp<any>>('/file/create-folder', {
+    return api.post<any, Resp<any>>('/file/folder', {
         'parentFolderId': parentFolderId,
         'name': name
     })

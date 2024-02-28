@@ -4,14 +4,14 @@ type (
     updateUserDetailReq {
         //用户id
         userId int64 `json:"id"`
-        // 手机号
-        Phone string `json:"phone"`
+        // 姓名
+        Name string `json:"name"`
         // 性别
         Gender int `json:"gender"`
     }
     updateUserDetailRes {
-        // 手机号
-        Phone string `json:"phone"`
+        // 姓名
+        Name string `json:"name"`
         // 性别
         Gender int `json:"gender"`
     }
@@ -23,8 +23,6 @@ type (
     getUserDetailRes {
     // 用户
     Name string  `json:"name"`
-    // 手机号
-    Phone string `json:"phone"`
     // 邮箱
     Email string `json:"email"`
     // 头像

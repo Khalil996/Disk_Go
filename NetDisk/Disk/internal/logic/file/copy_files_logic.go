@@ -49,8 +49,8 @@ func (l *CopyFilesLogic) CopyFiles(req *types.CopyFilesReq) error {
 	for _, file := range files {
 		file.Id = idgen.NextId()
 		file.Name = file.Name + "_" + time.Now().Format(define.TimeFormat2) + "复制"
-		file.UpdateAt = now
-		file.CreateAt = now
+		file.Updated = now
+		file.Created = now
 	}
 	affected, err := l.svcCtx.Engine.Insert(files)
 	if err != nil || affected != int64(len(files)) {

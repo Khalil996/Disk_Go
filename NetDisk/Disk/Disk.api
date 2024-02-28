@@ -40,16 +40,16 @@ service Disk-api {
 )
 service Disk-api{
 	@handler getFileDetail
-	get /:id (IdPathReq) returns(fileRes)
+	get /:id (IdPathReq) returns (FileResp)
 	
 	@handler listFile
-	get  /list/:parentFolderId (parentFolderIdReq) returns ([]*fileRes)
+	get /list/:parentFolderId (parentFolderIdReq) returns ([]*FileResp)
 	
 	@handler listFileByType
-	get /type/:fileType (fileTypeReq) returns ([]*fileRes)
+	get /type/:fileType (FileTypeReq) returns ([]*FileResp)
 	
 	@handler listFolder
-	get /folder-list/:parentFolderId (parentFolderIdReq) returns ([]*listFolderRes)
+	get /folder-list/:parentFolderId (parentFolderIdReq) returns ([]*ListFolderStruct)
 	
 	@handler listFileMovableFolder
 	get /move/:parentFolderId (parentFolderIdReq) returns ([]ListFolderStruct)
@@ -61,19 +61,19 @@ service Disk-api{
 	put /move (moveFilesReq) returns ()
 	
 	@handler moveFolders
-	put /move-folder (moveFoldersReq) returns ()
+	put /folder-move (moveFoldersReq) returns ()
 	
-	@handler  updateFiles
-	put / (updateFilesReq) returns ()
+	@handler updateFile
+	put / (UpdateNameReq) returns ()
 	
-	@handler  updateFolders
-	put /folder (updateFoldersReq) returns ()
+	@handler updateFolder
+	put /folder (UpdateNameReq) returns ()
 	
 	@handler copyFiles
-	post /copy-file (copyFilesReq) returns ()
+	post /copy (CopyFilesReq) returns ()
 	
 	@handler deleteFiles
-	put /delete (IdsReq) returns ()
+	put /delete (DeleteFilesReq) returns ()
 	
 	@handler deleteFilesTruly
 	post /delete (IdsReq) returns ()
@@ -87,10 +87,10 @@ service Disk-api{
 	@handler recoverFiles
 	put /recover (RecoverFilesReq) returns ()
 	
-	@handler createFolders
-	post /create-folder (createFoldersReq) returns ()
+	@handler createFolder
+	post /folder (createFolderReq) returns ()
 	
-	@handler listDeleteFiles
+	@handler listDeletedFiles
 	get /delete () returns ([]*DeletedFilesResp)
 }
 

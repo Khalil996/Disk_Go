@@ -38,7 +38,7 @@ func (l *RecoverFilesLogic) RecoverFiles(fileIds, folderIds []int64) error {
 		// 1.恢复文件delFlag字段
 		fileBean := &models.File{
 			DelFlag: define.StatusFileUndeleted,
-			Model:   models.Model{DeleteAt: time.Now().Local().UTC()},
+			DelTime: time.Now().Local().Unix(),
 		}
 		if affected, err := session.In("id", fileIds).
 			And("user_id = ?", userId).
@@ -53,7 +53,7 @@ func (l *RecoverFilesLogic) RecoverFiles(fileIds, folderIds []int64) error {
 			// 2.恢复文件夹delFlag字段
 			folderBean := &models.Folder{
 				DelFlag: define.StatusFolderUndeleted,
-				Model:   models.Model{DeleteAt: time.Now().Local().UTC()},
+				DelTime: time.Now().Local().Unix(),
 			}
 			if affected, err := session.In("id", folderIds).
 				And("del_flag = ?", define.StatusFolderDeleted).

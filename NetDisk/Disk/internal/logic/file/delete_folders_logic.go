@@ -40,13 +40,14 @@ func (l *DeleteFoldersLogic) DeleteFolders(req *types.IdsReq) error {
 		var (
 			folders []*models.Folder
 			err     error
+			now     = time.Now().Local().Unix()
 		)
 
 		for len(folderIds) > 0 {
 			// 1.删除当前文件夹下的文件
 			fileBean := &models.File{
 				DelFlag: define.StatusFileDeleted,
-				Model:   models.Model{DeleteAt: time.Now().Local().UTC()},
+				DelTime: now,
 			}
 			if _, err = session.In("folder_id", folderIds).
 				And("user_id = ?", userId).
@@ -58,7 +59,7 @@ func (l *DeleteFoldersLogic) DeleteFolders(req *types.IdsReq) error {
 			// 2.删除当前选中的文件夹
 			folderBean := &models.Folder{
 				DelFlag: define.StatusFolderDeleted,
-				Model:   models.Model{DeleteAt: time.Now().Local().UTC()},
+				DelTime: now,
 			}
 			if _, err = session.In("id", folderIds).
 				And("user_id = ?", userId).

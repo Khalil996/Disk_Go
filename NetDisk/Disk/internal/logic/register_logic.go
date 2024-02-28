@@ -6,6 +6,8 @@ import (
 	"context"
 	"errors"
 	"log"
+	"math/rand"
+	"strconv"
 
 	"cloud_go/Disk/internal/svc"
 	"cloud_go/Disk/internal/types"
@@ -30,6 +32,8 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRes, err error) {
 	// todo: add your logic here and delete this line
 	code, err := l.svcCtx.RDB.Get(l.ctx, req.Email).Result()
+
+	Name := "user_" + strconv.FormatInt(int64(rand.Int31()), 10)
 	if err != nil {
 		return nil, errors.New("验证码已过期")
 	}
@@ -48,6 +52,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 	user := &models.UserBasic{
 		UserName: req.Name,
 		Password: common.MD5(req.Password),
+		Name:     Name,
 		Email:    req.Email,
 		Status:   0,
 	}

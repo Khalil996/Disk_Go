@@ -1,9 +1,13 @@
 package file
 
 import (
+	"cloud_go/Disk/common/redis"
 	"cloud_go/Disk/define"
 	"cloud_go/Disk/models"
 	"context"
+	"fmt"
+	redis2 "github.com/redis/go-redis/v9"
+	"time"
 
 	"cloud_go/Disk/internal/svc"
 	"cloud_go/Disk/internal/types"
@@ -25,26 +29,62 @@ func NewListFileByTypeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Li
 	}
 }
 
-func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) (resp []*types.FileRes, err error) {
+func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.FileResp, error) {
 	// todo: add your logic here and delete this line
-	userId := l.ctx.Value(define.UserIdKey).(int64)
-	var files []*models.File
+	var (
+		userId   = l.ctx.Value(define.UserIdKey).(int64)
+		engine   = l.svcCtx.Engine
+		rdb      = l.svcCtx.RDB
+		minioSvc = l.svcCtx.Minio.NewService()
+		key      = fmt.Sprintf(redis.FileTypeDownloadUrlKey, userId, req.FileType)
+		files    []*models.File
+		resp     []*types.FileResp
+	)
 
-	if err := l.svcCtx.Engine.Where("type = ?", req.FileType).
-		And("user_id = ?", userId).And("del_flag = ?",
-		define.StatusFileUndeleted).Find(&files); err != nil {
+	if err := engine.Desc("created").
+		Select("id, name, size, object_name, type, status, created, updated").
+		Where("type = ?", req.FileType).
+		And("user_id = ?", userId).
+		And("del_flag = ?", define.StatusFileUndeleted).
+		Find(&files); err != nil {
 		return nil, err
 	}
 
-	for _, file := range files {
-		resp = append(resp, &types.FileRes{
+	zs, redisErr := rdb.ZRevRangeWithScores(l.ctx, key, 0, -1).Result()
+	if redisErr != nil && redisErr != redis2.Nil {
+		logx.Errorf("通过类型获取文件列表，redis获取set失败，err: %v", redisErr)
+	}
+
+	var urls []redis2.Z
+	for i, file := range files {
+		var url string
+		if len(zs) == len(files) && redisErr == nil {
+			url = zs[i].Member.(string)
+		} else {
+			url2, err := minioSvc.GenUrl(file.ObjectName, true)
+			if err != nil {
+				logx.Errorf("通过类型获取文件列表，[%d]获取url失败，err: %v", file.ObjectName, redisErr)
+			} else {
+				url = url2
+				urls = append(urls, redis2.Z{Member: url, Score: float64(file.Created.Unix())})
+				if err = rdb.ZAdd(l.ctx, key, urls...).Err(); err != nil {
+					logx.Errorf("通过类型获取文件列表，redis缓存url失败，err: %v", err)
+				}
+				if err = rdb.Expire(l.ctx, key, 7*24*time.Hour).Err(); err != nil {
+					logx.Errorf("通过类型获取文件列表，设置缓存expire失败，ERR: [%v]", err)
+				}
+			}
+		}
+
+		resp = append(resp, &types.FileResp{
 			Id:      file.Id,
 			Name:    file.Name,
-			Url:     file.Url,
+			Url:     url,
+			Type:    file.Type,
 			Size:    file.Size,
 			Status:  file.Status,
-			Updated: file.UpdateAt.Format(define.TimeFormat1),
+			Updated: file.Updated.Format(define.TimeFormat1),
 		})
 	}
-	return
+	return resp, nil
 }

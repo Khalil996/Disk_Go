@@ -12,27 +12,27 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type ListDeleteFilesLogic struct {
+type ListDeletedFilesLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewListDeleteFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListDeleteFilesLogic {
-	return &ListDeleteFilesLogic{
+func NewListDeletedFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListDeletedFilesLogic {
+	return &ListDeletedFilesLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *ListDeleteFilesLogic) ListDeleteFiles() (resp []*types.DeletedFilesResp, err error) {
+func (l *ListDeletedFilesLogic) ListDeletedFiles() (resp []*types.DeletedFilesResp, err error) {
 	// todo: add your logic here and delete this line
 	userId := l.ctx.Value(define.UserIdKey).(int64)
 	var files []*models.File
 	var folders []*models.Folder
-	if err = l.svcCtx.Engine.Select("id, name, url, delete_at").Where("user_id = ?", userId).
-		And("del_flag = ?", define.StatusFileDeleted).Asc("delete_at").
+	if err = l.svcCtx.Engine.Select("id, name, url, del_time").Where("user_id = ?", userId).
+		And("del_flag = ?", define.StatusFileDeleted).Asc("del_time").
 		Find(&files); err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (l *ListDeleteFilesLogic) ListDeleteFiles() (resp []*types.DeletedFilesResp
 			Size:       file.Size,
 			FolderId:   file.FolderId,
 			FolderName: m[file.FolderId],
-			DelTime:    file.DeleteAt.Format(define.TimeFormat1),
+			DelTime:    file.DelTime,
 		})
 	}
 	return

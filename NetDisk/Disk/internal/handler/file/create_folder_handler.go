@@ -10,16 +10,16 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func UpdateFoldersHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func CreateFolderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.UpdateFoldersReq
+		var req types.CreateFolderReq
 		if err := httpx.ParseJsonBody(r, &req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
-		l := file.NewUpdateFoldersLogic(r.Context(), svcCtx)
-		if err := l.UpdateFolders(&req); err != nil {
+		l := file.NewCreateFolderLogic(r.Context(), svcCtx)
+		if err := l.CreateFolder(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)

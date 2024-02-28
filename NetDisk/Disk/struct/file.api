@@ -1,56 +1,69 @@
-syntax = "v1"
-// 定义请求结构体
 type (
+    IdPathReq {
+        Id int64 `path:"id"`
+    }
     IdsReq {
         Ids []int64 `json:"ids"`
     }
-    parentFolderIdReq{
-        ParentFolderId int64 `path:"parentFolderId"`
+
+    UpdateNameReq {
+        Id int64 `json:"id"`
+        Name string `json:"name"`
     }
-    IdPathReq{
-        Id int64 `path:"id"`
+
+    CopyFilesReq {
+        FolderId int64 `path:"folderId"`
+        FileIdsStruct
     }
-    fileTypeReq{
+
+    DeleteFilesReq {
+        FileIdsStruct
+        FolderId int64 `json:"folderId"`
+    }
+
+    recoverReq {
+        FolderIdsStruct
+        FileIdsStruct
+    }
+
+    deleteBatchTrulyReq {
+        FolderIdsStruct
+        FileIdsStruct
+    }
+
+    FileTypeReq {
         FileType int64 `path:"fileType"`
     }
-    ListFolderMovableFolderReq {
-        ParentFolderId int64 `json:"parentFolderId"`
-        SelectedFolderIds []int64 `json:"selectedFolderIds"`
+
+    parentFolderIdReq {
+        parentFolderId int64 `path:"parentFolderId"`
     }
-    moveFilesReq{
+
+    createFolderReq {
+        name string `json:"name"`
+        parentFolderId int64 `json:"parentFolderId"`
+    }
+
+    moveFilesReq {
         FolderId int64 `json:"folderId"`
         FileIdsStruct
     }
-    moveFoldersReq{
-        FolderId int64 `json:"folderId"`
-        recoverFoldersReq
-    }
-    updateFilesReq{
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-    }
-    updateFoldersReq{
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-    }
-    copyFilesReq{
-        FolderId int64 `path:"folderId"`
-       FileIdsStruct
+
+    moveFoldersReq {
+        parentFolderId int64 `json:"parentFolderId"`
+        FolderIdsStruct
     }
 
-    recoverFoldersReq{
-        FolderIds []int64 `json:"folderIds"`
+    ListFolderMovableFolderReq {
+        parentFolderId int64 `json:"parentFolderId"`
+        SelectedFolderIds []int64 `json:"selectedFolderIds"`
     }
 
-    RecoverFilesReq{
+    RecoverFilesReq {
         Files []*RecoverFilesStruct `json:"files"`
     }
-    createFoldersReq{
-        Name string `json:"name"`
-        ParentFolderId int64 `json:"parentFolderId"`
-    }
 )
-// 定义响应结构体
+
 type (
     DeletedFilesResp {
         Id int64 `json:"id"`
@@ -60,28 +73,20 @@ type (
         Size int64 `json:"size"`
         FolderId int64 `json:"folderId,omitempty"`
         FolderName string `json:"folderName"`
-        DelTime string `json:"delTime"`
+        DelTime int64 `json:"delTime"`
     }
-    fileRes{
+
+    FileResp {
         Id int64 `json:"id"`
         Name string `json:"name"`
         Url string `json:"url"`
+        Type int8 `json:"type"`
+        Ext string `json:"ext"`
         Status int8 `json:"status"`
         Size int64 `json:"size"`
         FolderId int64 `json:"folderId,omitempty"`
         Created string `json:"created"`
         Updated string `json:"updated"`
-    }
-
-    listFolderRes{
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        Updated string `json:"updated,omitempty"`
-    }
-
-    listDeleteItemsRes{
-        Folders []*ListDeletedFolderStruct `json:"folders"`
-        Files []*ListDeletedFileStruct `json:"files"`
     }
 )
 
@@ -92,25 +97,16 @@ type (
         Updated string `json:"updated,omitempty"`
     }
 
-    ListDeletedFolderStruct {
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        DelTime int64 `json:"delTime"`
+    FolderIdsStruct {
+        folderIds []int64 `json:"folderIds"`
     }
 
-    ListDeletedFileStruct {
-        Id int64 `json:"id"`
-        Name string `json:"name"`
-        Url string `json:"url"`
-        DelTime int64 `json:"delTime"`
+    FileIdsStruct {
+        fileIds []int64 `json:"fileIds"`
     }
 
     RecoverFilesStruct {
         FileId int64 `json:"fileId"`
         FolderId int64 `json:"folderId"`
-    }
-
-    FileIdsStruct {
-        fileIds []int64 `json:"fileIds"`
     }
 )

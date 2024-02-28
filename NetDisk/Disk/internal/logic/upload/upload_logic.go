@@ -32,36 +32,45 @@ func NewUploadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadLogi
 }
 
 func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (interface{}, error) {
-	// todo: add your logic here and delete this line
-	userId := l.ctx.Value(define.UserIdKey).(int64)
+	var (
+		userId = l.ctx.Value(define.UserIdKey).(int64)
+		engine = l.svcCtx.Engine
+		rdb    = l.svcCtx.RDB
+	)
 
 	fileIdStr := strconv.FormatInt(req.FileId, 10)
 	key := redis.UploadCheckKey + fileIdStr
-	fileInfo, err := l.svcCtx.RDB.HGetAll(l.ctx, key).Result()
+	fileInfo, err := rdb.HGetAll(l.ctx, key).Result()
 	if err != nil {
 		return nil, err
 	}
+
 	if fileInfo["userId"] != strconv.FormatInt(userId, 10) {
 		return nil, errors.New("信息有误1")
 	}
 	if fileInfo["name"] != fileParam.FileHeader.Filename {
 		return nil, errors.New("信息有误2")
 	}
+
 	folderId := fileInfo["folderId"]
 	if folderId != "0" {
-		if has, err := l.svcCtx.Engine.Where("id =?", folderId).Exist(&models.FileFs{}); err != nil {
+		if has, err := engine.Where("id = ?", folderId).
+			Exist(&models.FileFs{}); err != nil {
 			return nil, err
 		} else if !has {
-			return nil, errors.New("文件夹不存在")
+			return nil, errors.New("信息有误3")
 		}
 	}
-	_, err = l.svcCtx.Engine.DoTransaction(l.saveAndUpload(fileInfo, fileParam.File))
+
+	_, err = engine.DoTransaction(l.saveAndUpload(fileInfo, fileParam.File))
 	if err != nil {
 		return nil, err
 	}
-	go l.svcCtx.RDB.Del(l.ctx, key)
+
+	go rdb.Del(l.ctx, key)
 	return nil, nil
 }
+
 func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipart.File) xorm.TxFn {
 	return func(session *xorm.Session) (interface{}, error) {
 
@@ -87,13 +96,17 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 		file := &models.File{}
 		file.Name = fileInfo["name"]
 		file.Url = ""
+		file.ObjectName = objectName
 		file.Size = size
+		file.Ext = fileInfo["ext"]
 		file.FsId = fsId
 		file.FolderId = folderId
 		file.UserId = userId
+		file.Type = define.GetTypeByBruteForce(fileInfo["ext"])
 		file.IsBig = define.SmallFileFlag
 		file.DoneAt = time.Now().Local()
 		file.Status = define.StatusFileUploaded
+		file.DelFlag = define.StatusFileUndeleted
 		if _, err := session.Insert(file); err != nil {
 			return nil, err
 		}

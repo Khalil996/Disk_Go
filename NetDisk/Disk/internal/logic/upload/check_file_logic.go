@@ -31,23 +31,23 @@ func NewCheckFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckFi
 	}
 }
 
-func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (resp *types.CheckFileResp, err error) {
-	// todo: add your logic here and delete this line
+func (l *CheckFileLogic) CheckFile(req *types.CheckFileReq) (*types.CheckFileResp, error) {
 	var fileFs models.FileFs
-	has, err := l.svcCtx.Engine.Where("hash=?", req.Hash).Get(&fileFs)
+	has, err := l.svcCtx.Engine.Where("hash = ?", req.Hash).Get(&fileFs)
 	if err != nil {
 		return nil, err
-	} else if !has {
+	} else if !has { // 文件不存在时
 		return l.doWhenNotExist(req)
 	}
 
+	// 文件存在
 	return l.doWhenExist(req, &fileFs)
 }
 
-// 检查文件是否存在
 func (l *CheckFileLogic) doWhenNotExist(req *types.CheckFileReq) (*types.CheckFileResp, error) {
 	var (
 		userId = l.ctx.Value(define.UserIdKey).(int64)
+		rdb    = l.svcCtx.RDB
 		resp   types.CheckFileResp
 	)
 
@@ -72,14 +72,14 @@ func (l *CheckFileLogic) doWhenNotExist(req *types.CheckFileReq) (*types.CheckFi
 		key = redis.UploadCheckBigFileKey + fileIdStr
 		fileInfo["chunkNum"] = math.Ceil(float64(req.Size) / define.ShardingSize)
 		fileInfo["chunkSum"] = 0
-		if _, err := l.svcCtx.RDB.HSet(l.ctx, key, fileInfo).Result(); err != nil {
+		if _, err := rdb.HSet(l.ctx, key, fileInfo).Result(); err != nil {
 			return nil, err
 		}
 	}
-	if _, err := l.svcCtx.RDB.HSet(l.ctx, key, fileInfo).Result(); err != nil {
+	if _, err := rdb.HSet(l.ctx, key, fileInfo).Result(); err != nil {
 		return nil, err
 	}
-	go l.svcCtx.RDB.Expire(l.ctx, key, redis.UploadCheckExpire)
+	go rdb.Expire(l.ctx, key, redis.UploadCheckExpire)
 	return &resp, nil
 }
 
@@ -98,7 +98,7 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *models.Fil
 	if err != nil {
 		return nil, err
 	} else if has {
-		return nil, errors.New("当前文件夹已存在该文件")
+		return nil, errors.New("当前文件夹已存在该文件😈")
 	}
 
 	// 该文件夹无该文件，信息落库
@@ -110,8 +110,10 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *models.Fil
 	file.FsId = fileFs.Id
 	file.Name = req.Name
 	file.FolderId = req.FolderId
+	file.Type = define.GetTypeByBruteForce(req.Ext)
 	file.Status = define.StatusFileUploaded
 	file.Url = fileFs.Url
+	file.ObjectName = fileFs.ObjectName
 	file.IsBig = isBigFlag
 	file.DoneAt = time.Now().Local()
 	file.DelFlag = define.StatusFileUndeleted

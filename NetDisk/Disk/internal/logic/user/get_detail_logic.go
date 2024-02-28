@@ -39,7 +39,6 @@ func (l *GetDetailLogic) GetDetail(req *types.GetUserDetailReq) (resp *types.Get
 	}
 	resp.Name = user.UserName
 	resp.Email = user.Email
-	resp.Phone = user.Phone
 	resp.Avatar = user.Avatar
 	resp.Gender = user.Gender
 

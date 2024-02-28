@@ -9,7 +9,8 @@ const (
 	UploadCheckBigFileKey = "upload:file-shard:"
 	UploadCheckChunkKeyF  = "upload:file-shard:%d:chunk:%d"
 
-	DownloadGetFsKey = "download:fs:fn:"
+	FileFolderDownloadUrlKey = "download:folder:%d:%d" // download:folder:{userId}:{folderId}
+	FileTypeDownloadUrlKey   = "download:type:%d:%d"   // download:type:{userId}:{type}
 )
 
 const (

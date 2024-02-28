@@ -26,24 +26,36 @@ func NewGetFileDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 	}
 }
 
-func (l *GetFileDetailLogic) GetFileDetail(req *types.IdPathReq) (resp *types.FileRes, err error) {
+func (l *GetFileDetailLogic) GetFileDetail(req *types.IdPathReq) (*types.FileResp, error) {
 	// todo: add your logic here and delete this line
-	userId := l.ctx.Value(define.UserIdKey).(int64)
-	var file = &models.File{}
-	has, err := l.svcCtx.Engine.ID(req.Id).And("user_id =?", userId).Get(file)
+	var (
+		userId   = l.ctx.Value(define.UserIdKey).(int64)
+		engine   = l.svcCtx.Engine
+		minioSvc = l.svcCtx.Minio.NewService()
+		file     = &models.File{}
+	)
+
+	has, err := engine.ID(req.Id).And("user_id = ?", userId).Get(file)
 	if err != nil {
 		return nil, err
 	} else if !has {
-		return nil, errors.New("文件不存在")
+		return nil, errors.New("未能找到该文件信息！😿")
 	}
-	resp = &types.FileRes{}
+
+	url, err := minioSvc.GenUrl(file.ObjectName, false)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &types.FileResp{}
 	resp.Id = file.Id
 	resp.Name = file.Name
-	resp.Status = file.Status
+	resp.Url = url
+	resp.Ext = file.Ext
 	resp.Size = file.Size
+	resp.Status = file.Status
 	resp.FolderId = file.FolderId
-	resp.Url = file.Url
-	resp.Created = file.CreateAt.Format(define.TimeFormat1)
-	resp.Updated = file.UpdateAt.Format(define.TimeFormat1)
-	return
+	resp.Created = file.Created.Format(define.TimeFormat1)
+	resp.Updated = file.Updated.Format(define.TimeFormat1)
+	return resp, nil
 }

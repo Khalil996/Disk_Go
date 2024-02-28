@@ -35,13 +35,13 @@ func (l *UpdateDetailLogic) UpdateDetail(req *types.UpdateUserDetailReq) (resp *
 	if !sign {
 		return nil, errors.New("user not found")
 	}
-	user.Phone = req.Phone
+	user.Name = req.Name
 	user.Gender = req.Gender
 	_, err = l.svcCtx.Engine.ID(req.UserId).Update(user)
 	if err != nil {
 		return nil, err
 	}
-	resp.Phone = req.Phone
+	resp.Name = req.Name
 	resp.Gender = req.Gender
 	return
 }

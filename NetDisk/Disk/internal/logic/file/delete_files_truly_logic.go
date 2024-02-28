@@ -34,6 +34,7 @@ func (l *DeleteFilesTrulyLogic) DeleteFilesTruly(req *types.IdsReq) error {
 	if err != nil {
 		return err
 	}
+
 	length := len(req.Ids)
 	if length != len(files) {
 		return errors.New("发生错误")

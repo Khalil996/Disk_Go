@@ -2,31 +2,32 @@ package file
 
 import (
 	"cloud_go/Disk/define"
-	"cloud_go/Disk/internal/svc"
-	"cloud_go/Disk/internal/types"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
 	"log"
 
+	"cloud_go/Disk/internal/svc"
+	"cloud_go/Disk/internal/types"
+
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type CreateFoldersLogic struct {
+type CreateFolderLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewCreateFoldersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateFoldersLogic {
-	return &CreateFoldersLogic{
+func NewCreateFolderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CreateFolderLogic {
+	return &CreateFolderLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *CreateFoldersLogic) CreateFolders(req *types.CreateFoldersReq) error {
+func (l *CreateFolderLogic) CreateFolder(req *types.CreateFolderReq) error {
 	// todo: add your logic here and delete this line
 	userId := l.ctx.Value(define.UserIdKey).(int64)
 	log.Println("UserId from context:", userId)

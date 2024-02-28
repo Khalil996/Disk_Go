@@ -24,9 +24,6 @@
         <!--        />-->
 
     </el-upload>
-    <button type="button" @click="dl">下载</button>
-
-    <a href="http://localhost:8888/test" download="file.txt">下载</a>
 </template>
 
 <script lang="ts" setup>
@@ -38,10 +35,6 @@ import SparkMD5 from 'spark-md5'
 import {checkChunk, checkFile, upload, uploadChunk, uploadConst} from "./uploading.ts";
 import {codeOk, promptError, promptSuccess} from "../../utils/apis/base.ts";
 import api from "../../utils/apis/request.ts";
-
-function dl() {
-    api.post('/test')
-}
 
 const fileFolderStore = useFileFolderStore()
 
@@ -66,7 +59,7 @@ async function handleUpload(param: UploadRequestOptions) {
 }
 
 async function checkBeforeUpload(file: UploadRawFile) {
-    const md5 = genMd5(file);
+    const md5 = await genMd5(file);
     const resp = await checkFile({
         folderId: fileFolderStore.folderId,
         name: file.name,
@@ -136,12 +129,14 @@ async function checkChunkAndUpload({chunk, fileId, hash}: any, chunkSeq: number)
     // TODO
 }
 
-function genMd5(file: UploadRawFile | Blob) {
+async function genMd5(file: UploadRawFile) {
     const spark = new SparkMD5.ArrayBuffer()
-    spark.append(file)
-    const md5 = spark.end();
-    console.log('file', md5)
-    return md5
+    try {
+        spark.append(await file.arrayBuffer())
+        return spark.end()
+    } catch (e) {
+        promptError(`上传文件 ${file.name} 失败！😨，${e}`)
+    }
 }
 
 function formatSize(file) {

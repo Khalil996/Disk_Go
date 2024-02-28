@@ -12,7 +12,7 @@ import (
 
 func DeleteFilesHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.IdsReq
+		var req types.DeleteFilesReq
 		if err := httpx.ParseJsonBody(r, &req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return

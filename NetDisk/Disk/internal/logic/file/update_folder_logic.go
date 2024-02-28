@@ -12,23 +12,25 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type UpdateFoldersLogic struct {
+type UpdateFolderLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewUpdateFoldersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateFoldersLogic {
-	return &UpdateFoldersLogic{
+func NewUpdateFolderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateFolderLogic {
+	return &UpdateFolderLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *UpdateFoldersLogic) UpdateFolders(req *types.UpdateFoldersReq) error {
+func (l *UpdateFolderLogic) UpdateFolder(req *types.UpdateNameReq) error {
 	// todo: add your logic here and delete this line
+
 	userId := l.ctx.Value(define.UserIdKey).(int64)
+
 	affect, err := l.svcCtx.Engine.ID(req.Id).And("user_id=?", userId).Update(&models.Folder{Name: req.Name})
 	if err != nil {
 		return err

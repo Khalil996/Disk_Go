@@ -55,7 +55,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	}
 	var userInfo types.UserInfo
 	userInfo.UserId = user.Id
-	userInfo.Name = user.UserName
+	userInfo.Name = user.Name
 	userInfo.Avatar = user.Avatar
 	userInfo.Email = user.Email
 	userInfo.Status = user.Status

@@ -1,13 +1,11 @@
 <template>
     <el-row class="tac">
         <el-menu
-                active-text-color="orange"
-                background-color="wheat"
+                active-text-color="blue"
+                background-color="#71dae3"
                 class="el-menu-vertical-demo"
                 default-active="2"
                 text-color="black"
-                @open="handleOpen"
-                @close="handleClose"
                 style="width: 100%"
         >
             <el-sub-menu index="1">
@@ -98,54 +96,48 @@
 
 <script lang="ts" setup>
 import {
-    Files,
-    Folder, Document, PictureFilled, Headset, More,
-    Delete, VideoCameraFilled
+  Files,
+  Folder, Document, PictureFilled, Headset, More,
+  Delete, VideoCameraFilled
 } from '@element-plus/icons-vue'
 
-const handleOpen = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
-}
-const handleClose = (key: string, keyPath: string[]) => {
-    console.log(key, keyPath)
-}
 </script>
 <style>
 .tac {
-    overflow: hidden;
-    height: 94vh;
+  overflow: hidden;
+  height: 94vh;
 }
 
 .cat-banner {
-    background-color: wheat;
-    position: absolute;
-    bottom: 1px;
+  background-color: #71dae3;
+  position: absolute;
+  bottom: 1px;
 }
 
 .cat-banner img {
-    animation-duration: 1s;
-    animation-name: slideInRight-enter;
-    animation-iteration-count: infinite;
+  animation-duration: 1s;
+  animation-name: slideInRight-enter;
+  animation-iteration-count: infinite;
 }
 
 @keyframes slideInRight-enter {
-    from {
-        margin-left: 0;
-    }
-    25% {
-        width: 50%;
-    }
-    to {
-        margin-left: 100%;
-    }
+  from {
+    margin-left: 0;
+  }
+  25% {
+    width: 50%;
+  }
+  to {
+    margin-left: 100%;
+  }
 }
 
 
 router-link {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 router-link:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 </style>

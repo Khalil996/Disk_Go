@@ -38,12 +38,12 @@ type EmailSendRes struct {
 
 type UpdateUserDetailReq struct {
 	UserId int64  `json:"id"`
-	Phone  string `json:"phone"`
+	Name   string `json:"name"`
 	Gender int    `json:"gender"`
 }
 
 type UpdateUserDetailRes struct {
-	Phone  string `json:"phone"`
+	Name   string `json:"name"`
 	Gender int    `json:"gender"`
 }
 
@@ -53,7 +53,6 @@ type GetUserDetailReq struct {
 
 type GetUserDetailRes struct {
 	Name   string `json:"name"`
-	Phone  string `json:"phone"`
 	Email  string `json:"email"`
 	Avatar string `json:"avatar"`
 	Gender int    `json:"gender"`
@@ -68,43 +67,15 @@ type UpdateAvatarRes struct {
 	Avatar string `json:"avatar"`
 }
 
-type IdsReq struct {
-	Ids []int64 `json:"ids"`
-}
-
-type ParentFolderIdReq struct {
-	ParentFolderId int64 `path:"parentFolderId"`
-}
-
 type IdPathReq struct {
 	Id int64 `path:"id"`
 }
 
-type FileTypeReq struct {
-	FileType int64 `path:"fileType"`
+type IdsReq struct {
+	Ids []int64 `json:"ids"`
 }
 
-type ListFolderMovableFolderReq struct {
-	ParentFolderId    int64   `json:"parentFolderId"`
-	SelectedFolderIds []int64 `json:"selectedFolderIds"`
-}
-
-type MoveFilesReq struct {
-	FolderId int64 `json:"folderId"`
-	FileIdsStruct
-}
-
-type MoveFoldersReq struct {
-	FolderId int64 `json:"folderId"`
-	RecoverFoldersReq
-}
-
-type UpdateFilesReq struct {
-	Id   int64  `json:"id"`
-	Name string `json:"name"`
-}
-
-type UpdateFoldersReq struct {
+type UpdateNameReq struct {
 	Id   int64  `json:"id"`
 	Name string `json:"name"`
 }
@@ -114,17 +85,51 @@ type CopyFilesReq struct {
 	FileIdsStruct
 }
 
-type RecoverFoldersReq struct {
-	FolderIds []int64 `json:"folderIds"`
+type DeleteFilesReq struct {
+	FileIdsStruct
+	FolderId int64 `json:"folderId"`
+}
+
+type RecoverReq struct {
+	FolderIdsStruct
+	FileIdsStruct
+}
+
+type DeleteBatchTrulyReq struct {
+	FolderIdsStruct
+	FileIdsStruct
+}
+
+type FileTypeReq struct {
+	FileType int64 `path:"fileType"`
+}
+
+type ParentFolderIdReq struct {
+	ParentFolderId int64 `path:"parentFolderId"`
+}
+
+type CreateFolderReq struct {
+	Name           string `json:"name"`
+	ParentFolderId int64  `json:"parentFolderId"`
+}
+
+type MoveFilesReq struct {
+	FolderId int64 `json:"folderId"`
+	FileIdsStruct
+}
+
+type MoveFoldersReq struct {
+	ParentFolderId int64 `json:"parentFolderId"`
+	FolderIdsStruct
+}
+
+type ListFolderMovableFolderReq struct {
+	ParentFolderId    int64   `json:"parentFolderId"`
+	SelectedFolderIds []int64 `json:"selectedFolderIds"`
 }
 
 type RecoverFilesReq struct {
 	Files []*RecoverFilesStruct `json:"files"`
-}
-
-type CreateFoldersReq struct {
-	Name           string `json:"name"`
-	ParentFolderId int64  `json:"parentFolderId"`
 }
 
 type DeletedFilesResp struct {
@@ -135,29 +140,20 @@ type DeletedFilesResp struct {
 	Size       int64  `json:"size"`
 	FolderId   int64  `json:"folderId,omitempty"`
 	FolderName string `json:"folderName"`
-	DelTime    string `json:"delTime"`
+	DelTime    int64  `json:"delTime"`
 }
 
-type FileRes struct {
+type FileResp struct {
 	Id       int64  `json:"id"`
 	Name     string `json:"name"`
 	Url      string `json:"url"`
+	Type     int8   `json:"type"`
+	Ext      string `json:"ext"`
 	Status   int8   `json:"status"`
 	Size     int64  `json:"size"`
 	FolderId int64  `json:"folderId,omitempty"`
 	Created  string `json:"created"`
 	Updated  string `json:"updated"`
-}
-
-type ListFolderRes struct {
-	Id      int64  `json:"id"`
-	Name    string `json:"name"`
-	Updated string `json:"updated,omitempty"`
-}
-
-type ListDeleteItemsRes struct {
-	Folders []*ListDeletedFolderStruct `json:"folders"`
-	Files   []*ListDeletedFileStruct   `json:"files"`
 }
 
 type ListFolderStruct struct {
@@ -166,26 +162,17 @@ type ListFolderStruct struct {
 	Updated string `json:"updated,omitempty"`
 }
 
-type ListDeletedFolderStruct struct {
-	Id      int64  `json:"id"`
-	Name    string `json:"name"`
-	DelTime int64  `json:"delTime"`
+type FolderIdsStruct struct {
+	FolderIds []int64 `json:"folderIds"`
 }
 
-type ListDeletedFileStruct struct {
-	Id      int64  `json:"id"`
-	Name    string `json:"name"`
-	Url     string `json:"url"`
-	DelTime int64  `json:"delTime"`
+type FileIdsStruct struct {
+	FileIds []int64 `json:"fileIds"`
 }
 
 type RecoverFilesStruct struct {
 	FileId   int64 `json:"fileId"`
 	FolderId int64 `json:"folderId"`
-}
-
-type FileIdsStruct struct {
-	FileIds []int64 `json:"fileIds"`
 }
 
 type CheckFileReq struct {

@@ -31,17 +31,16 @@ func (l *DownloadLogic) Download(req *types.DownloadReq) (string, error) {
 	var file models.File
 	var fileFs models.FileFs
 
-	has, err := l.svcCtx.Engine.ID(req.FileId).And("user_id=?", userId).Get(&file)
-	if err != nil || !has {
+	if has, err := l.svcCtx.Engine.ID(req.FileId).
+		And("user_id = ?", userId).
+		Get(&file); err != nil || !has {
 		return "", err
 	}
-	has, err = l.svcCtx.Engine.ID(file.FsId).Get(&fileFs)
-	if err != nil || !has {
+
+	if has, err := l.svcCtx.Engine.ID(file.FsId).
+		Get(&fileFs); err != nil || !has {
 		return "", err
 	}
-	filename, err := l.svcCtx.Minio.NewService().DownloadFile(l.ctx, fileFs.ObjectName)
-	if err != nil {
-		return "", err
-	}
-	return filename, nil
+
+	return "", nil
 }

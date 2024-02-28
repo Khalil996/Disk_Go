@@ -12,22 +12,23 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type UpdateFilesLogic struct {
+type UpdateFileLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewUpdateFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateFilesLogic {
-	return &UpdateFilesLogic{
+func NewUpdateFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UpdateFileLogic {
+	return &UpdateFileLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *UpdateFilesLogic) UpdateFiles(req *types.UpdateFilesReq) error {
+func (l *UpdateFileLogic) UpdateFile(req *types.UpdateNameReq) error {
 	// todo: add your logic here and delete this line
+
 	userId := l.ctx.Value(define.UserIdKey).(int64)
 
 	affected, err := l.svcCtx.Engine.ID(req.Id).And("user_id=?", userId).Update(&models.File{Name: req.Name})

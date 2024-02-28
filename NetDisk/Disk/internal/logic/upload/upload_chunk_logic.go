@@ -78,6 +78,7 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		fileFs.Name = fileInfo["name"]
 		fileFs.Hash = fileInfo["hash"]
 		fileFs.Size = size
+		fileFs.ObjectName = objectName
 		fileFs.Url = ""
 		fileFs.ChunkNum = chunkNum
 		fileFs.Status = define.StatusFsBigFileNeedMerge
@@ -93,7 +94,10 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 		file.FsId = fsId
 		file.FolderId = folderId
 		file.Url = ""
+		file.Ext = fileInfo["ext"]
+		file.ObjectName = objectName
 		file.Size = size
+		file.Type = define.GetTypeByBruteForce(fileInfo["ext"])
 		file.Status = define.StatusFileUploaded
 		file.IsBig = define.BigFileFlag
 		file.DoneAt = time.Now().Local()

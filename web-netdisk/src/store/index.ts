@@ -29,7 +29,7 @@ export const useBaseStore = defineStore('base', () => {
 
     async function getUserInfo() {
         if (user.data.id == 0) {
-            const resp = await api.get<any, Resp<UserInfo>>(`/user/detail/0`)
+            const resp = await api.get<any, Resp<UserInfo>>(`/user/getdetial`)
             if (resp && resp.code === 0) {
                 user.data = resp.data
             }

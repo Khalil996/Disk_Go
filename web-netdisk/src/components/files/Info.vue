@@ -15,25 +15,26 @@
             </div>
 
             <div v-if="showCase[0]">
-                <div style="margin: 3% 0 3% 0; font-size: 0.8rem">文件详情</div>
+                <div style="margin: 3% 0 3% 0">文件详情</div>
                 <div>已选择 {{ selectedNum }} 个项目</div>
             </div>
 
             <div v-if="showCase[1]">
-                <div style="margin: 3% 0 3% 0; font-size: 0.8rem">文件详情</div>
-                <el-image style="border-radius: 5px;width: 100%; height: auto" :src="fileDetail.data.url"
-                          :fit="'contain'"/>
-                <div style="margin-top: 4%;padding-left: 4%;">
+                <div style="margin: 3% 0 3% 0">文件详情</div>
+                <el-image style="border-radius: 5px; width: 100%; max-height: 600px;"
+                          :src="fileDetail.data.url"
+                          :fit="'cover'"/>
+                <div style="margin-top: 4%; padding-left: 4%;">
                     <div class="file-name">{{ fileDetail.data.name }}</div>
                     <div class="file-info">创建时间：{{ fileDetail.data.created }}</div>
                     <div class="file-info">修改时间：{{ fileDetail.data.updated }}</div>
                     <div class="file-info">文件格式：{{ fileDetail.data.ext }}</div>
-                    <div class="file-info">文件大小：{{ fileDetail.data.size }}</div>
+                    <div class="file-info">文件大小：{{ fileDetail.data.sizeStr }}</div>
                 </div>
             </div>
 
             <div v-if="showCase[2]">
-                <div style="margin: 3% 0 3% 0; font-size: 0.8rem">文件夹内容</div>
+                <div style="margin: 3% 0 3% 0">文件夹内容</div>
 
             </div>
         </el-col>
@@ -46,6 +47,7 @@ import {onUnmounted, reactive, ref} from "vue";
 import {useFileFolderStore} from "../../store/fileFolder.ts";
 import {getFileDetailById, listFolderDetailById, search} from "./Info.ts";
 import {codeOk} from "../../utils/apis/base.ts";
+import {formatSize} from "../../utils/util.ts";
 
 const fileFolderStore = useFileFolderStore()
 
@@ -69,6 +71,8 @@ async function getFileDetail(fileId: number) {
     const resp = await getFileDetailById(fileId)
     if (resp.code === codeOk) {
         fileDetail.data = resp.data
+        fileDetail.data.sizeStr = formatSize(resp.data.size)
+        console.log(fileDetail.data, formatSize(resp.data.size))
     }
 }
 
@@ -106,12 +110,13 @@ onUnmounted(() => {
 
 .file-name {
     color: #454d5a;
+    font-size: 1.5rem;
     font-weight: 600;
 }
 
 .file-info {
     margin-top: 3%;
-    font-size: 0.8rem;
+    font-size: 1.2rem;
     color: #878c9c;
 }
 </style>

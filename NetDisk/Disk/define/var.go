@@ -1,6 +1,8 @@
 package define
 
-import "regexp"
+import (
+	"regexp"
+)
 
 var (
 	Upattern, _ = regexp.Compile("^[a-zA-Z0-9]{6,20}$")
@@ -9,11 +11,14 @@ var (
 
 var (
 	DocSuffix = map[string]bool{
-		".doc": true, ".docx": true,
-		".xlsx": true, ".xls": true,
-		".ppt": true, " pptx": true,
-		".pdf": true,
-		".txt": true,
+		".doc":  true,
+		".docx": true,
+		".xlsx": true,
+		".xls":  true,
+		".ppt":  true,
+		".pptx": true,
+		".pdf":  true,
+		".txt":  true,
 	}
 
 	ImageSuffix = map[string]bool{
@@ -54,3 +59,17 @@ var (
 		".m4v":  true,
 	}
 )
+
+func GetTypeByBruteForce(ext string) int8 {
+	if DocSuffix[ext] {
+		return TypeDocs
+	} else if ImageSuffix[ext] {
+		return TypeImage
+	} else if AudioSuffix[ext] {
+		return TypeAudio
+	} else if VideoSuffix[ext] {
+		return TypeVideo
+	} else {
+		return TypeOther
+	}
+}

@@ -29,7 +29,7 @@ func NewMoveFoldersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MoveF
 func (l *MoveFoldersLogic) MoveFolders(req *types.MoveFoldersReq) error {
 	// todo: add your logic here and delete this line
 	userId := l.ctx.Value(define.UserIdKey).(int64)
-	parentFolderId := req.FolderId
+	parentFolderId := req.ParentFolderId
 	var folder = &models.Folder{}
 
 	if parentFolderId != 0 {

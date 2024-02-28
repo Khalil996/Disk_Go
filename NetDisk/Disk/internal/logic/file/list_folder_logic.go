@@ -40,7 +40,7 @@ func (l *ListFolderLogic) ListFolder(req *types.ParentFolderIdReq) (resp []*type
 		resp = append(resp, &types.ListFolderStruct{
 			Id:      folder.Id,
 			Name:    folder.Name,
-			Updated: folder.UpdateAt.Format(define.TimeFormat1),
+			Updated: folder.Updated.Format(define.TimeFormat1),
 		})
 	}
 
