@@ -1,0 +1,136 @@
+import (
+	"struct/login.api"
+	"struct/user.api"
+	"struct/file.api"
+	"struct/upload.api"
+	"struct/download.api"
+)
+
+service Disk-api {
+	@handler login
+	post /login (loginReq)returns(LoginResp)
+	
+	@handler register
+	post /register (registerReq)returns(registerRes)
+	
+	@handler EmailSend
+	post /EmailSend (EmailSendReq)returns(EmailSendRes)
+}
+
+@server (
+	group: user
+	prefix :/user
+	middleware:Auth
+)
+service Disk-api {
+	@handler updateDetail
+	post /updatedetail (updateUserDetailReq) returns (updateUserDetailRes)
+	
+	@handler getDetail
+	get /getdetail (getUserDetailReq) returns (getUserDetailRes)
+	
+	@handler updateAvatar
+	post /avatar (updateAvatarReq) returns (updateAvatarRes)
+}
+
+@server(
+	group: file
+	prefix :/file
+	middleware:Auth
+)
+service Disk-api{
+	@handler getFileDetail
+	get /:id (IdPathReq) returns(fileRes)
+	
+	@handler listFile
+	get  /list/:parentFolderId (parentFolderIdReq) returns ([]*fileRes)
+	
+	@handler listFileByType
+	get /type/:fileType (fileTypeReq) returns ([]*fileRes)
+	
+	@handler listFolder
+	get /folder-list/:parentFolderId (parentFolderIdReq) returns ([]*listFolderRes)
+	
+	@handler listFileMovableFolder
+	get /move/:parentFolderId (parentFolderIdReq) returns ([]ListFolderStruct)
+	
+	@handler listFolderMovableFolder
+	post /folder-move (ListFolderMovableFolderReq) returns ([]ListFolderStruct)
+	
+	@handler moveFiles
+	put /move (moveFilesReq) returns ()
+	
+	@handler moveFolders
+	put /move-folder (moveFoldersReq) returns ()
+	
+	@handler  updateFiles
+	put / (updateFilesReq) returns ()
+	
+	@handler  updateFolders
+	put /folder (updateFoldersReq) returns ()
+	
+	@handler copyFiles
+	post /copy-file (copyFilesReq) returns ()
+	
+	@handler deleteFiles
+	put /delete (IdsReq) returns ()
+	
+	@handler deleteFilesTruly
+	post /delete (IdsReq) returns ()
+	
+	@handler deleteFolders
+	put /folder-delete (IdsReq) returns ()
+	
+	@handler deleteAllFilesTruly
+	post /clear () returns ()
+	
+	@handler recoverFiles
+	put /recover (RecoverFilesReq) returns ()
+	
+	@handler createFolders
+	post /create-folder (createFoldersReq) returns ()
+	
+	@handler listDeleteFiles
+	get /delete () returns ([]*DeletedFilesResp)
+}
+
+@server(
+	group: upload
+	prefix: /upload
+	middleware: Auth
+)
+service Disk-api {
+	// 检查该用户文件是否已存在（秒传）
+	@handler checkFile
+	post /check (CheckFileReq) returns (CheckFileResp)
+	
+	// 上传小文件
+	@handler upload
+	post / (UploadReq) returns ()
+	
+	// 检查分片
+	@handler checkChunk
+	post /check_chunk (CheckChunkReq) returns (CheckChunkResp)
+	
+	@handler uploadChunk
+	post /chunk (UploadChunkReq) returns ()
+}
+
+@server(
+	group: download
+	prefix: /download
+	middleware: Auth
+)
+service Disk-api {
+	// 检查大小
+	@handler checkSize
+	post /check_size (checkSizeReq) returns (checkSizeResp)
+	
+	// 下载小文件
+	@handler download
+	post / (downloadReq) returns ()
+	
+	// 下载分片
+	@handler chunkDownload
+	post /chunk (chunkDownloadReq) returns ()
+}

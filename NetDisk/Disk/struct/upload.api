@@ -1,0 +1,36 @@
+type (
+    CheckFileReq {
+        folderId int64 `json:"folderId"`
+        hash string `json:"hash"`
+        size int64 `json:"size"`
+        name string `json:"name"`
+        ext string `json:"ext"`
+    }
+
+    UploadReq {
+        FileId int64 `form:"fileId"`
+    }
+
+    CheckChunkReq {
+        FileId int64 `json:"fileId"`
+        Hash string `json:"hash"`
+        ChunkSeq int64 `json:"chunkSeq"`
+    }
+
+    UploadChunkReq {
+        FileId int64 `form:"fileId"`
+        ChunkSeq int64 `form:"chunkSeq"`
+    }
+)
+
+type (
+    CheckFileResp {
+        FileId int64 `json:"fileId"`
+        Status int8 `json:"status"`             // 0：文件未上传，1：文件已存在
+        ConfirmShard int8 `json:"confirmShard"` // 0：不分片，1：分片
+    }
+
+    CheckChunkResp {
+        Status int8 `json:"status"`
+    }
+)

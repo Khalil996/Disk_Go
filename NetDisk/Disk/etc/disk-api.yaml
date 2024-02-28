@@ -1,0 +1,22 @@
+Name: Disk-api
+Host: 0.0.0.0
+Port: 8888
+MaxBytes: 104857600
+
+Xorm:
+  Dsn: root:Khalil996!@tcp(120.55.52.9:3306)/disk_go?charset=utf8mb4&parseTime=True&loc=Local
+
+Minio:
+  MinioPort: 120.55.52.9:9000
+  MinioAccessKey: yZTQtya0lehHiQ2XKd6d
+  MinioSecretKey: oG3rdslpKuvjVmQV0BjyFQa2wrJaxVnasQlWijhs
+  MinioBucket: disk
+  MinioUseSSL: false
+
+Redis:
+  Addr: 120.55.52.9:6379
+  Password: ""
+  DB: 0
+
+Idgen:
+  WorkerId: 32

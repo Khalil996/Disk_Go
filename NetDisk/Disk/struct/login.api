@@ -1,0 +1,38 @@
+syntax = "v1"
+
+type (
+    loginReq {
+        Username string `json:"username"`
+        Password string `json:"password"`
+    }
+
+    LoginResp {
+        Token    string   `json:"token"`
+        UserInfo UserInfo `json:"userInfo"`
+    }
+
+    UserInfo {
+        UserId    int64  `json:"userId"`
+        Name      string `json:"name"`
+        Avatar    string `json:"avatar"`
+        Email     string  `json:"email"`
+        Status    int8   `json:"status"`
+    }
+
+    registerReq {
+        //用户名
+        Name string `json:"name"`
+        // 密码
+        Password string `json:"password"`
+        // 邮箱
+        Email string `json:"email"`
+        // 验证码
+        Code string `json:"code"`
+    }
+    registerRes {}
+
+    EmailSendReq {
+        Email string `json:"email"`
+    }
+    EmailSendRes {}
+)

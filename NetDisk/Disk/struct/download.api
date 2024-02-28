@@ -1,0 +1,21 @@
+type (
+    checkSizeReq {
+        fileId int64 `json:"fileId"`
+    }
+
+    downloadReq {
+        fileId int64 `json:"fileId"`
+    }
+
+    chunkDownloadReq {
+        fileId int64 `json:"fileId"`
+        chunkSeq int64 `json:"chunkSeq"`
+    }
+)
+
+type (
+    checkSizeResp {
+        isBig int8 `json:"status"`
+        chunkNum int64 `json:"chunkNum"`
+    }
+)
