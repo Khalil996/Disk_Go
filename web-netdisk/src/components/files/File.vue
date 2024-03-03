@@ -50,7 +50,7 @@
                             </div>
                         </template>
                     </el-table-column>
-                    <el-table-column label="修改时间" min-width="100">
+                    <el-table-column label="修改时间" min-width="200">
                         <template #default="scope">
                             <div>{{ scope.row.updated }}</div>
                         </template>
