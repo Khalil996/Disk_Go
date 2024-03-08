@@ -9,17 +9,29 @@ import (
 	"time"
 )
 
+//	func SendCode(toUserEmail, code string) error {
+//		e := email.NewEmail()
+//		e.From = "验证码获取 <18559680907@163.com>"
+//		e.To = []string{toUserEmail}
+//		e.Subject = "咪咪网盘"
+//		e.HTML = []byte("你的验证码是<h1>" + code + "</h1>")
+//
+//		//返回eof时，关闭ssl
+//		return e.SendWithTLS("smtp.163.com:465",
+//			smtp.PlainAuth("", "18559680907@163.com", "IBXQLJWYKMYYHJOO", "smtp.163.com"),
+//			&tls.Config{InsecureSkipVerify: true, ServerName: "smtp.163.com"})
+//	}
 func SendCode(toUserEmail, code string) error {
 	e := email.NewEmail()
-	e.From = "验证码获取 <18559680907@163.com>"
+	e.From = "验证码获取 <2649475267@qq.com>"
 	e.To = []string{toUserEmail}
-	e.Subject = "验证码已发送，请查收"
+	e.Subject = "咪咪网盘"
 	e.HTML = []byte("你的验证码是<h1>" + code + "</h1>")
 
 	//返回eof时，关闭ssl
-	return e.SendWithTLS("smtp.163.com:465",
-		smtp.PlainAuth("", "18559680907@163.com", "GHHMBKGPETJVEDIQ", "smtp.163.com"),
-		&tls.Config{InsecureSkipVerify: true, ServerName: "smtp.163.com"})
+	return e.SendWithTLS("smtp.qq.com:465",
+		smtp.PlainAuth("", "2649475267@qq.com", "fhtgncpegyjeecad", "smtp.qq.com"),
+		&tls.Config{InsecureSkipVerify: true, ServerName: "smtp.qq.com"})
 }
 
 func RandCode() string {

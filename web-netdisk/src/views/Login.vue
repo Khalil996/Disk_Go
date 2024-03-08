@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import LoginForm from '@/components/LoginForm.vue'
+import LoginForm from '../components/LoginForm.vue'
 import RegisterForm from "../components/RegisterForm.vue"
 import {ref} from "vue";
 

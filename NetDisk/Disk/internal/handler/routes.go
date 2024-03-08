@@ -40,12 +40,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
-					Path:    "/updatedetail",
+					Path:    "/detail",
 					Handler: user.UpdateDetailHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/getdetail",
+					Path:    "/detail/:id",
 					Handler: user.GetDetailHandler(serverCtx),
 				},
 				{

@@ -32,4 +32,8 @@ func TestMysqlTest(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+	err = engine.CreateTables(models.FileShare{})
+	if err != nil {
+		panic(err)
+	}
 }

@@ -14,6 +14,4 @@ export interface RegisterResp {
 export const registerPost = (registerReq: RegisterReq): Resp<RegisterResp> => {
     return api.post<any, Resp<RegisterResp>>("/register", registerReq)
 }
-export const sendEmailPost = (email: string): Resp<RegisterResp> => {
-    return api.post<any, Resp<RegisterResp>>("/EmailSend", {email})
-}
+

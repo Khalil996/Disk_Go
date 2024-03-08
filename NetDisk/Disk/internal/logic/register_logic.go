@@ -2,6 +2,7 @@ package logic
 
 import (
 	"cloud_go/Disk/common"
+	"cloud_go/Disk/define"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
@@ -32,7 +33,10 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRes, err error) {
 	// todo: add your logic here and delete this line
 	code, err := l.svcCtx.RDB.Get(l.ctx, req.Email).Result()
-
+	if req.Name == "" || req.Email == "" || req.Password == "" || req.Code == "" {
+		err = errors.New("参数不能为空")
+		return nil, err
+	}
 	Name := "user_" + strconv.FormatInt(int64(rand.Int31()), 10)
 	if err != nil {
 		return nil, errors.New("验证码已过期")
@@ -46,7 +50,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		return nil, err
 	}
 	if cnt > 0 {
-		err = errors.New("用户名已存在")
+		err = errors.New("账号已存在")
 		return nil, err
 	}
 	user := &models.UserBasic{
@@ -55,6 +59,9 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		Name:     Name,
 		Email:    req.Email,
 		Status:   0,
+		IsAdmin:  0,
+		Used:     0,
+		Capacity: define.DefaultCapacity,
 	}
 	n, err := l.svcCtx.Engine.Insert(user)
 	if err != nil {

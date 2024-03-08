@@ -17,6 +17,7 @@ type (
         Avatar    string `json:"avatar"`
         Email     string  `json:"email"`
         Status    int8   `json:"status"`
+        Signature string  `json:"signature"`
     }
 
     registerReq {

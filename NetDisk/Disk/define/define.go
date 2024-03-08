@@ -30,6 +30,8 @@ const (
 const (
 	ShardingFloor float64 = 20971520 // 需要分片起始大小：20MB
 	ShardingSize  float64 = 5242880  // 分片大小： 5MB
+
+	DefaultCapacity = 1099511627776 //用户容量
 )
 
 const (

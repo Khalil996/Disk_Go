@@ -8,17 +8,36 @@
         <div class="demo-basic--circle">
           <el-popover
               placement="top-start"
-              title="Title"
-              :width="200"
+              width="10vw"
               trigger="hover"
-              content="this is content, this is content, this is content"
           >
             <template #reference>
               <div class="block head-pic">
-                <el-avatar :size="50" :src="url"/>
+                <el-avatar :size="50" :src="user.data.avatar"/>
               </div>
             </template>
-            <button @click="logout">退出登录</button>
+            <div class="name">{{ user.data.name }}</div>
+
+            <el-progress type="line"
+                         :percentage="percentage"
+                         :stroke-width="10">
+              <template #default>
+                <div style="font-size: 1.2rem">{{ used }} / {{ capacity }}</div>
+              </template>
+            </el-progress>
+
+            <el-button-group style="margin-top: 10px;display:flex; justify-content: center">
+              <el-button type="warning" plain size="small" @click="toFileFolder">
+                <el-icon>
+                  <Place/>
+                </el-icon>&nbsp;个人信息
+              </el-button>
+              <el-button type="warning" plain size="small" @click="baseStore.clearToken">
+                退出登录&nbsp;<el-icon>
+                <Right/>
+              </el-icon>
+              </el-button>
+            </el-button-group>
           </el-popover>
 
         </div>
@@ -28,28 +47,40 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted} from "vue";
-import {useBaseStore, UserInfo} from "../../store";
-import router from "../../router";
+import {onMounted, reactive, ref} from "vue";
+import {useBaseStore} from "@/store";
+import {
+  Place, Right
+} from "@element-plus/icons-vue";
+import {formatSize} from "@/utils/util.ts";
 
 const baseStore = useBaseStore()
 
-const url = "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-
-let user: { data: UserInfo }
+let user = reactive({
+      data:
+          {id: 0, username: '', name: '', avatar: '', email: '', signature: '', used: 0, capacity: 0, status: 0}
+    }),
+    percentage = ref(0),
+    status = ref('success'),
+    used = ref(''),
+    capacity = ref('')
 
 async function showUserInfo() {
-  if (!user) {
-    user = await useBaseStore().getUserInfo()
+  if (user.data.id === 0) {
+    user.data = await useBaseStore().getUserInfo()
+    percentage.value = Math.floor((user.data.used / user.data.capacity) * 100)
+    used.value = formatSize(user.data.used)
+    capacity.value = formatSize(user.data.capacity)
+    if (percentage.value > 90) {
+      status.value = 'exception'
+    }
+    console.log(user.data, percentage.value)
   }
 }
 
-function logout () {
-  // baseStore.updateToken('')
-  router.push('/login')
-  window.location.reload()
+function toFileFolder() {
+  window.location.href = '/info/user'
 }
-
 
 onMounted(() => {
   showUserInfo()
@@ -72,5 +103,13 @@ onMounted(() => {
 
 .grid-content {
   min-height: 36px;
+}
+
+.name {
+  margin-bottom: 5px;
+  color: #213547;
+  font-family: Arial, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
 }
 </style>

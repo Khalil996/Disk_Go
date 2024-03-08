@@ -80,8 +80,23 @@
               </router-link>
             </el-menu-item>
           </el-sub-menu>
-
-            <el-menu-item index="3" disabled>
+          <el-sub-menu  index="3">
+            <template #title>
+              <el-icon>
+                <Delete/>
+              </el-icon>
+              分享
+            </template>
+            <el-menu-item index="3-1">
+              <router-link class="a" to="/share">
+                <el-icon>
+                  <Delete/>
+                </el-icon>
+                <span>分享</span>
+              </router-link>
+            </el-menu-item>
+          </el-sub-menu>
+            <el-menu-item index="4" disabled>
                 <el-icon>
                     <document/>
                 </el-icon>

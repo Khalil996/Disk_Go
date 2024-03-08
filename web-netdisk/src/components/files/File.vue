@@ -18,7 +18,8 @@
                             <el-button type="primary" round plain :icon="Rank" @click="fileButton(2)">移动</el-button>
                             <el-button type="primary" round plain :icon="CopyDocument" @click="fileButton(3)">复制
                             </el-button>
-                            <el-button type="danger" round plain :icon="DeleteFilled" @click="fileButton(4)">删除
+                          <el-button type="primary" round plain :icon="Share" @click="fileButton(4)">分享</el-button>
+                            <el-button type="danger" round plain :icon="DeleteFilled" @click="fileButton(5)">删除
                             </el-button>
                         </el-button-group>
                     </template>
@@ -106,7 +107,11 @@
         </template>
     </el-dialog>
 
-    <el-dialog v-model="fileDialogVisible[4]" title="删除文件">
+  <el-dialog v-model="fileDialogVisible[4]" title="分享文件">
+  </el-dialog>
+
+
+    <el-dialog v-model="fileDialogVisible[5]" title="删除文件">
         <h3>
             <el-icon>
                 <Warning/>
@@ -129,7 +134,8 @@
 import {ElTable} from "element-plus";
 import {
     CopyDocument, DeleteFilled, Download,
-    EditPen, FolderOpened, Rank, Warning
+    EditPen, FolderOpened, Rank, Warning,
+    Share
 } from "@element-plus/icons-vue";
 import {onMounted, reactive, ref} from "vue";
 import {
@@ -145,6 +151,7 @@ import Uploading from "./Uploading.vue";
 import {useFileFolderStore} from "../../store/fileFolder.ts";
 import {formatSize} from "../../utils/util.ts";
 import {typeImage} from "../../utils/constant.ts";
+import Share from "@/components/files/Share/Share.vue";
 
 let fileFolderStore = useFileFolderStore()
 let forFolder = false
@@ -186,17 +193,18 @@ let selectedFiles: File[]
 let fileMovableFolderList = reactive<{ data: Folder[] }>({data: folderList.data})
 
 // 对话框
-function fileButton(option: number) {
+async function fileButton(option: number) {
     selectedFiles = fileTableRef.value!.getSelectionRows()
     if (!selectedFiles) {
         return
     }
   if (option === 0) {
-
+    await download(selectedFiles)
+    return
   } else if (option === 1) {
         Object.assign(renamingFile, selectedFiles[0])
     } else if (option === 2 || option === 3) {
-        toFolder(0)
+      await toFolder(0)
         fileCopyAndMoveDialog.value = true
         fileCopyAndMoveFlag = option
         return
@@ -244,6 +252,7 @@ async function fileCopyAndMoveConfirm() {
 async function deleteFilesConfirm() {
     await deleteFiles(selectedFiles.map(file => file.id), folderId)
     await listFiles()
+    promptSuccess('删除成功🦊')
 }
 
 function fileSelectionChange(files: File[]) {
@@ -258,6 +267,12 @@ function fileSelectionChange(files: File[]) {
     }
 
     fileFolderStore.selectChange(files.map(file => file.id), true)
+}
+async function download(files: File[]) {
+  for (const file of files) {
+    await window.open(file.url)
+
+  }
 }
 
 onMounted(() => {

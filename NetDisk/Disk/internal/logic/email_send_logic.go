@@ -8,6 +8,7 @@ import (
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -29,6 +30,9 @@ func NewEmailSendLogic(ctx context.Context, svcCtx *svc.ServiceContext) *EmailSe
 
 func (l *EmailSendLogic) EmailSend(req *types.EmailSendReq) (resp *types.EmailSendRes, err error) {
 	// todo: add your logic here and delete this line
+	if req.Email == "" {
+		return nil, errors.New("邮箱不能为空")
+	}
 	cnt, err := l.svcCtx.Engine.Where("email=?", req.Email).Count(new(models.UserBasic))
 	if err != nil {
 		return nil, err
@@ -41,5 +45,6 @@ func (l *EmailSendLogic) EmailSend(req *types.EmailSendReq) (resp *types.EmailSe
 	code := common.RandCode()
 	l.svcCtx.RDB.Set(l.ctx, req.Email, code, time.Second*time.Duration(define.CodeExpire))
 	err = common.SendCode(req.Email, code)
+	log.Println(err)
 	return resp, nil
 }

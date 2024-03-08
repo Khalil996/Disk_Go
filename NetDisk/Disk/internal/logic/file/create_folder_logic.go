@@ -44,7 +44,8 @@ func (l *CreateFolderLogic) CreateFolder(req *types.CreateFolderReq) error {
 	}
 
 	if exist, err := l.svcCtx.Engine.Where("name = ?", req.Name).
-		And("parent_id = ?", req.ParentFolderId).Exist(folder); err != nil {
+		And("parent_id = ?", req.ParentFolderId).
+		And("del_flag=?", define.StatusFolderUndeleted).Exist(folder); err != nil {
 		logx.Errorf("创建文件夹查询同名文件夹是否存在出错，err: %v", err)
 		return errors.New("发生错误，" + err.Error())
 	} else if exist {

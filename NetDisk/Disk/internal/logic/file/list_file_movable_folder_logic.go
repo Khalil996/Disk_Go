@@ -31,7 +31,7 @@ func (l *ListFileMovableFolderLogic) ListFileMovableFolder(req *types.ParentFold
 	userId := l.ctx.Value(define.UserIdKey).(int64)
 	var folders []*models.Folder
 	if err := l.svcCtx.Engine.Cols("id", "name").Where("parent_id = ?", req.ParentFolderId).
-		And("user_id = ?", userId).Find(&folders); err != nil {
+		And("user_id = ?", userId).And("del_flag=?", define.StatusFolderUndeleted).Find(&folders); err != nil {
 		return nil, errors.New("出错了" + err.Error())
 	}
 

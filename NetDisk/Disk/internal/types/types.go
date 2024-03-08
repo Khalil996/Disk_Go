@@ -12,11 +12,12 @@ type LoginResp struct {
 }
 
 type UserInfo struct {
-	UserId int64  `json:"userId"`
-	Name   string `json:"name"`
-	Avatar string `json:"avatar"`
-	Email  string `json:"email"`
-	Status int8   `json:"status"`
+	UserId    int64  `json:"userId"`
+	Name      string `json:"name"`
+	Avatar    string `json:"avatar"`
+	Email     string `json:"email"`
+	Status    int8   `json:"status"`
+	Signature string `json:"signature"`
 }
 
 type RegisterReq struct {
@@ -37,34 +38,10 @@ type EmailSendRes struct {
 }
 
 type UpdateUserDetailReq struct {
-	UserId int64  `json:"id"`
-	Name   string `json:"name"`
-	Gender int    `json:"gender"`
-}
-
-type UpdateUserDetailRes struct {
-	Name   string `json:"name"`
-	Gender int    `json:"gender"`
-}
-
-type GetUserDetailReq struct {
-	UserId int64 `json:"id"`
-}
-
-type GetUserDetailRes struct {
-	Name   string `json:"name"`
-	Email  string `json:"email"`
-	Avatar string `json:"avatar"`
-	Gender int    `json:"gender"`
-}
-
-type UpdateAvatarReq struct {
-	UserId int64  `json:"id"`
-	Avatar string `json:"avatar"`
-}
-
-type UpdateAvatarRes struct {
-	Avatar string `json:"avatar"`
+	Name      string `json:"name"`
+	Signature string `json:"signature"`
+	Email     string `json:"email"`
+	Code      string `json:"code"`
 }
 
 type IdPathReq struct {

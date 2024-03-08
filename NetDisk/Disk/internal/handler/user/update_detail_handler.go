@@ -1,6 +1,7 @@
 package user
 
 import (
+	xhttp "github.com/zeromicro/x/http"
 	"net/http"
 
 	"cloud_go/Disk/internal/logic/user"
@@ -13,16 +14,15 @@ func UpdateDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.UpdateUserDetailReq
 		if err := httpx.Parse(r, &req); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
 		l := user.NewUpdateDetailLogic(r.Context(), svcCtx)
-		resp, err := l.UpdateDetail(&req)
-		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+		if err := l.UpdateDetail(&req); err != nil {
+			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)
 		}
 	}
 }

@@ -1,43 +1,11 @@
 syntax = "v1"
 
 type (
-    updateUserDetailReq {
-        //用户id
-        userId int64 `json:"id"`
-        // 姓名
+    UpdateUserDetailReq {
         Name string `json:"name"`
-        // 性别
-        Gender int `json:"gender"`
-    }
-    updateUserDetailRes {
-        // 姓名
-        Name string `json:"name"`
-        // 性别
-        Gender int `json:"gender"`
-    }
-    getUserDetailReq {
-        //用户id
-        userId int64 `json:"id"`
+        Signature string `json:"signature"`
+        Email string `json:"email"`
+        Code string `json:"code"`
     }
 
-    getUserDetailRes {
-    // 用户
-    Name string  `json:"name"`
-    // 邮箱
-    Email string `json:"email"`
-    // 头像
-    Avatar string `json:"avatar"`
-    // 性别
-    Gender int `json:"gender"`
-    }
-    updateAvatarReq {
-        //用户id
-        userId int64 `json:"id"`
-        // 头像
-        Avatar string `json:"avatar"`
-    }
-    updateAvatarRes{
-        // 头像
-        Avatar string `json:"avatar"`
-    }
 )

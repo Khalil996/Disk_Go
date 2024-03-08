@@ -58,6 +58,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	userInfo.Name = user.Name
 	userInfo.Avatar = user.Avatar
 	userInfo.Email = user.Email
+	userInfo.Signature = user.Signature
 	userInfo.Status = user.Status
 
 	resp = new(types.LoginResp)

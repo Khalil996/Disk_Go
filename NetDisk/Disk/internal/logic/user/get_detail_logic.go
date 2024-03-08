@@ -1,9 +1,13 @@
 package user
 
 import (
+	"cloud_go/Disk/common/redis"
+	"cloud_go/Disk/define"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
+	redis2 "github.com/redis/go-redis/v9"
+	"strconv"
 
 	"cloud_go/Disk/internal/svc"
 	"cloud_go/Disk/internal/types"
@@ -25,22 +29,50 @@ func NewGetDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetDeta
 	}
 }
 
-func (l *GetDetailLogic) GetDetail(req *types.GetUserDetailReq) (resp *types.GetUserDetailRes, err error) {
+func (l *GetDetailLogic) GetDetail(req *types.IdPathReq) (interface{}, error) {
 	// todo: add your logic here and delete this line
-	resp = &types.GetUserDetailRes{}
+	var (
+		loginUserId = l.ctx.Value(define.UserIdKey).(int64)
+		userIdStr   = strconv.FormatInt(loginUserId, 10)
+		engine      = l.svcCtx.Engine
+		rdb         = l.svcCtx.RDB
+		minioSvc    = l.svcCtx.Minio.NewService()
+		user        models.UserBasic
+	)
 
-	user := new(models.UserBasic)
-	has, err := l.svcCtx.Engine.Where("id = ?", req.UserId).Get(user)
-	if err != nil {
-		return nil, err
+	targetUserId := req.Id
+	if req.Id == 0 {
+		targetUserId = loginUserId
 	}
-	if !has {
-		return nil, errors.New("user not found")
-	}
-	resp.Name = user.UserName
-	resp.Email = user.Email
-	resp.Avatar = user.Avatar
-	resp.Gender = user.Gender
 
-	return
+	key := redis.UserInfoKey + userIdStr
+	m, err := rdb.HGetAll(l.ctx, key).Result()
+	if err != nil && err != redis2.Nil {
+		logx.Errorf("获取用户info，redis获取失败，ERR: [%v]", err)
+	} else if id, ok := m["id"]; err == redis2.Nil || !ok || id == "" {
+		cols := "id, name, username, avatar, email, signature, status, used, capacity"
+		if has, err := engine.Select(cols).ID(targetUserId).Get(&user); err != nil {
+			logx.Errorf("更新用户info，数据库info获取失败，ERR: [%v]", err)
+			return nil, err
+		} else if !has {
+			return nil, errors.New("用户信息有误")
+		}
+		url, _ := minioSvc.GenUrl(user.Avatar, false)
+		m2 := map[string]interface{}{
+			"id":        user.Id,
+			"name":      user.Name,
+			"username":  user.UserName,
+			"avatar":    url,
+			"email":     user.Email,
+			"signature": user.Signature,
+			"capacity":  user.Capacity,
+			"status":    user.Status,
+			"used":      user.Used,
+		}
+		if err = rdb.HSet(l.ctx, key, m2).Err(); err != nil {
+			logx.Errorf("更新用户info，info->redis失败，ERR: [%v]", err)
+		}
+		return m2, nil
+	}
+	return m, nil
 }

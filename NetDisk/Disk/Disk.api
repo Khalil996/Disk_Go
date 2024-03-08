@@ -24,13 +24,13 @@ service Disk-api {
 )
 service Disk-api {
 	@handler updateDetail
-	post /updatedetail (updateUserDetailReq) returns (updateUserDetailRes)
+	post /detail (UpdateUserDetailReq) returns ()
 	
 	@handler getDetail
-	get /getdetail (getUserDetailReq) returns (getUserDetailRes)
+	get /detail/:id (IdPathReq) returns ()
 	
 	@handler updateAvatar
-	post /avatar (updateAvatarReq) returns (updateAvatarRes)
+	post /avatar () returns ()
 }
 
 @server(

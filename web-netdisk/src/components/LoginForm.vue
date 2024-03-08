@@ -24,15 +24,14 @@ let loginForm = reactive<LoginReq>({
 })
 
 const login = async () => {
-    const resp = await loginPost(loginForm)
-    if (resp.code === 0) {
-        const baseStore = useBaseStore()
-        baseStore.updateToken(resp.data.token)
-
-        router.push('/file/folder/0')
-    }
+  const resp = await loginPost(loginForm)
+  if (resp.code === 0) {
+    const baseStore = useBaseStore()
+    baseStore.updateToken(resp.data.token)
+    await baseStore.updateUserInfo(resp.data.userInfo)
+    router.push('/file/folder/0')
+  }
 }
-
 const rules = {
     username: [
         {required: true, message: '请输入账号', trigger: 'blur'},

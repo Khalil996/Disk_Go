@@ -1,6 +1,6 @@
 <template>
   <div class="common-layout">
-    <el-container>
+    <el-container style="box-shadow: 0 2px 6px 0 #ddd;">
       <el-header style="background-color: #34b2e0;">
         <avatar/>
       </el-header>
@@ -10,7 +10,7 @@
           <navigator/>
         </el-aside>
 
-        <el-main style="background-color: #dae5e7; padding: 15px 0 0 20px">
+        <el-main style="background-color: #dae5e7; padding: 15px 0 0 20px;position: relative">
           <router-view/>
         </el-main>
       </el-container>

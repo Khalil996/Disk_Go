@@ -4,7 +4,7 @@
             <div class="search-box">
                 <el-input placeholder="搜索我的文件"
                           v-model="searchStr" clearable>
-                    <template #append>
+                    <template  >
                         <el-button @click="searchConfirm">
                             <el-icon>
                                 <search/>
@@ -97,6 +97,8 @@ const unsubscribe = fileFolderStore.$subscribe((_, state) => {
         showCase.value = [true, false, false]
     }
 })
+
+
 
 onUnmounted(() => {
     unsubscribe()
