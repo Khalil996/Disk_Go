@@ -7970,3 +7970,9 @@
 {"@timestamp":"2024-04-25T11:27:14.542+08:00","caller":"stat/metrics.go:210","content":"(Disk-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms","level":"stat"}
 {"@timestamp":"2024-04-25T11:27:20.266+08:00","caller":"stat/usage.go:61","content":"CPU: 0m, MEMORY: Alloc=2.4Mi, TotalAlloc=13.0Mi, Sys=18.8Mi, NumGC=13","level":"stat"}
 {"@timestamp":"2024-04-25T11:27:20.597+08:00","caller":"load/sheddingstat.go:61","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0","level":"stat"}
+{"@timestamp":"2024-04-25T11:28:14.530+08:00","caller":"stat/metrics.go:210","content":"(Disk-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms","level":"stat"}
+{"@timestamp":"2024-04-25T11:28:20.262+08:00","caller":"stat/usage.go:61","content":"CPU: 0m, MEMORY: Alloc=2.7Mi, TotalAlloc=13.3Mi, Sys=18.8Mi, NumGC=13","level":"stat"}
+{"@timestamp":"2024-04-25T11:28:20.593+08:00","caller":"load/sheddingstat.go:61","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0","level":"stat"}
+{"@timestamp":"2024-04-25T11:29:14.542+08:00","caller":"stat/metrics.go:210","content":"(Disk-api) - qps: 0.0/s, drops: 0, avg time: 0.0ms, med: 0.0ms, 90th: 0.0ms, 99th: 0.0ms, 99.9th: 0.0ms","level":"stat"}
+{"@timestamp":"2024-04-25T11:29:20.264+08:00","caller":"stat/usage.go:61","content":"CPU: 0m, MEMORY: Alloc=2.4Mi, TotalAlloc=13.6Mi, Sys=18.8Mi, NumGC=14","level":"stat"}
+{"@timestamp":"2024-04-25T11:29:20.598+08:00","caller":"load/sheddingstat.go:61","content":"(api) shedding_stat [1m], cpu: 0, total: 0, pass: 0, drop: 0","level":"stat"}
