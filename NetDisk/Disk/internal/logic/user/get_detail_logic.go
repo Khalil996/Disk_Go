@@ -2,7 +2,6 @@ package user
 
 import (
 	"cloud_go/Disk/common/redis"
-	"cloud_go/Disk/define"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
@@ -29,15 +28,14 @@ func NewGetDetailLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetDeta
 	}
 }
 
-func (l *GetDetailLogic) GetDetail(req *types.IdPathReq) (interface{}, error) {
+func (l *GetDetailLogic) GetDetail(req *types.IdPathReq, loginUserId int64) (interface{}, error) {
 	// todo: add your logic here and delete this line
 	var (
-		loginUserId = l.ctx.Value(define.UserIdKey).(int64)
-		userIdStr   = strconv.FormatInt(loginUserId, 10)
-		engine      = l.svcCtx.Engine
-		rdb         = l.svcCtx.RDB
-		minioSvc    = l.svcCtx.Minio.NewService()
-		user        models.UserBasic
+		userIdStr = strconv.FormatInt(loginUserId, 10)
+		engine    = l.svcCtx.Engine
+		rdb       = l.svcCtx.RDB
+		minioSvc  = l.svcCtx.Minio.NewService()
+		user      models.UserBasic
 	)
 
 	targetUserId := req.Id
@@ -57,7 +55,7 @@ func (l *GetDetailLogic) GetDetail(req *types.IdPathReq) (interface{}, error) {
 		} else if !has {
 			return nil, errors.New("用户信息有误")
 		}
-		url, _ := minioSvc.GenUrl(user.Avatar, false)
+		url, _ := minioSvc.GenUrl(user.Avatar, "", false)
 		m2 := map[string]interface{}{
 			"id":        user.Id,
 			"name":      user.Name,
@@ -72,6 +70,12 @@ func (l *GetDetailLogic) GetDetail(req *types.IdPathReq) (interface{}, error) {
 		if err = rdb.HSet(l.ctx, key, m2).Err(); err != nil {
 			logx.Errorf("更新用户info，info->redis失败，ERR: [%v]", err)
 		}
+		go func() {
+			if err2 := rdb.Expire(l.ctx, key, redis.UserInfoExpire).Err(); err2 != nil {
+				logx.Errorf("更新用户info，info->redis设置expire失败，ERR: [%v]", err2)
+				return
+			}
+		}()
 		return m2, nil
 	}
 	return m, nil

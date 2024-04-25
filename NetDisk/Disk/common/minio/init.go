@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var Minio *Client
+
 type (
 	Conf struct {
 		MinioPort      string
@@ -39,18 +41,19 @@ func Init(conf *Conf) *Client {
 		}
 	}
 
-	return &Client{bucketName, client}
+	Minio = &Client{bucketName, client}
+	return Minio
 }
 
 // GenObjectName 生成objectName
 func (c *Client) GenObjectName(hash string, ext string) (string, string) {
 	filename := hash + ext
 	return filename, "/" + time.Now().Format("2006-01") + "/" +
-		string(hash[0]) + "/" + string(hash[0]) + "/" + hash + "/" + filename
+		string(hash[0]) + "/" + string(hash[1]) + "/" + hash + "/" + filename
 }
 
 func (c *Client) GenChunkObjectName(hash string, chunkId int64) string {
 	return "/" + time.Now().Format("2006-01") + "/" +
-		string(hash[0]) + "/" + string(hash[0]) + "/" + hash +
+		string(hash[0]) + "/" + string(hash[1]) + "/" + hash +
 		"/" + hash + "@" + strconv.FormatInt(chunkId, 10)
 }

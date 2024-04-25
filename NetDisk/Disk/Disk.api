@@ -4,6 +4,7 @@ import (
 	"struct/file.api"
 	"struct/upload.api"
 	"struct/download.api"
+	"struct/admin.api"
 )
 
 service Disk-api {
@@ -11,10 +12,25 @@ service Disk-api {
 	post /login (loginReq)returns(LoginResp)
 	
 	@handler register
-	post /register (registerReq)returns(registerRes)
+	post /register (RegisterReq) returns ()
 	
 	@handler EmailSend
 	post /EmailSend (EmailSendReq)returns(EmailSendRes)
+	
+	@handler getShareInfo
+	post /file/share-info (GetShareInfoReq) returns (GetShareInfoResp)
+	
+	@handler getDetail
+	get /user/detail/:id (IdPathReq) returns ()
+	
+	@handler getUserInfoByShareId
+	get /file/share-user/:id (IdPathReq) returns (UserInfo)
+	// admin
+	@handler adminLogin
+	post /admin/login (loginReq) returns (LoginResp)
+	
+	@handler shareReport
+	post /file/share-report (ReportReq) returns ()
 }
 
 @server (
@@ -25,9 +41,6 @@ service Disk-api {
 service Disk-api {
 	@handler updateDetail
 	post /detail (UpdateUserDetailReq) returns ()
-	
-	@handler getDetail
-	get /detail/:id (IdPathReq) returns ()
 	
 	@handler updateAvatar
 	post /avatar () returns ()
@@ -92,6 +105,25 @@ service Disk-api{
 	
 	@handler listDeletedFiles
 	get /delete () returns ([]*DeletedFilesResp)
+	
+	//分享功能
+	@handler listShares
+	get /share () returns ([]*ListShareStruct)
+	
+	@handler share
+	post /share (ShareReq) returns ()
+	
+	@handler shareFolder
+	post /share-folder (ShareFolderReq) returns ()
+	
+	@handler shareCancel
+	post /share-cancel (IdStrsReq) returns ()
+	
+	@handler search
+	get /search (SearchReq) returns ()
+	
+	@handler downloadFolder
+	post /folder-download (DFReq) returns ([]string )
 }
 
 @server(
@@ -134,3 +166,53 @@ service Disk-api {
 	@handler chunkDownload
 	post /chunk (chunkDownloadReq) returns ()
 }
+
+@server(
+	group: admin
+	prefix: /admin
+	middleware: Auth
+)
+service Disk-api {
+	@handler listUsers
+	post /user-list (PageReq) returns ([]*UserInfo)
+	
+	@handler listSharesAdmin
+	post /share-list (PageReq) returns ()
+	
+	@handler setUserStatus
+	post /user-status (SetStatusReq) returns ()
+	
+	@handler getUrl
+	get /file-url/:id/:type (GetUrlReq) returns ()
+	
+	@handler setFileStatus
+	post /file-status (SetFileStatusReq) returns ()
+	
+	@handler getAdminInfo
+	get /info () returns ()
+	
+	@handler getAdminList
+	post /list (PageReq) returns ()
+	
+	@handler setAdminStatus
+	post /status (SetStatusReq) returns ()
+	
+	@handler getShareInfoAdmin
+	get /share-file/:id (IdStrReq) returns (GetShareInfoResp)
+	
+	@handler setShareStatus
+	post /share-status (SetShareStatusReq) returns ()
+	
+	@handler addAdmin
+	post /add (AddAdminReq) returns ()
+	
+	@handler deleteAdmin
+	delete /:id (IdStrReq) returns ()
+}
+
+type (
+	GetShareInfoReq {
+		Id  string `json:"id"`
+		Pwd string `json:"pwd"`
+	}
+)

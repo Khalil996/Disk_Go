@@ -21,4 +21,6 @@ const (
 
 	UploadCheckExpire      = 24 * time.Hour
 	UploadCheckChunkExpire = 10 * time.Minute
+
+	DownloadExpire = 7*24*time.Hour - 10000
 )

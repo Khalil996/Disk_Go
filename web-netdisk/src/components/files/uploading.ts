@@ -42,7 +42,7 @@ export function upload(formData: FormData) {
 }
 
 export function checkChunk(req: CheckChunkReq) {
-    return api.post<any, Resp<any>>('/upload/chunk-check', req)
+    return api.post<any, Resp<any>>('/upload/check_chunk', req)
 }
 
 export function uploadChunk(formData: FormData) {

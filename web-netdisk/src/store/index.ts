@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import api from "../utils/apis/request.ts";
-import {Resp} from "../utils/apis/base.ts";
+import {codeOk, Resp} from "../utils/apis/base.ts";
 
 export interface UserInfo {
     id: number
@@ -43,7 +43,7 @@ export const useBaseStore = defineStore('base', () => {
     async function getUserInfo() {
         if (user.data.id === 0) {
             const resp = await api.get<any, Resp<UserInfo>>(`/user/detail/0`)
-            if (resp.code === 0) {
+            if (resp.code === codeOk) {
                 user.data = resp.data
             }
         }

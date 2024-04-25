@@ -25,7 +25,7 @@ func UploadChunkHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := upload.NewUploadChunkLogic(r.Context(), svcCtx)
-		if err := l.UploadChunk(&req, fileParam); err != nil {
+		if err = l.UploadChunk(&req, fileParam); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, nil)

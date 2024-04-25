@@ -2,6 +2,7 @@ package file
 
 import (
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
@@ -30,7 +31,8 @@ func (l *UpdateFolderLogic) UpdateFolder(req *types.UpdateNameReq) error {
 	// todo: add your logic here and delete this line
 
 	userId := l.ctx.Value(define.UserIdKey).(int64)
-
+	var err error
+	defer mqs.LogSend(l.ctx, err, "UpdateFolder", req.Id, req.Name)
 	affect, err := l.svcCtx.Engine.ID(req.Id).And("user_id=?", userId).Update(&models.Folder{Name: req.Name})
 	if err != nil {
 		return err

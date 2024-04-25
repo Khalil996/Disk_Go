@@ -40,7 +40,7 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.F
 		files    []*models.File
 		resp     []*types.FileResp
 	)
-
+	// 查询未删除文件
 	if err := engine.Desc("created").
 		Select("id, name, size, object_name, type, status, created, updated").
 		Where("type = ?", req.FileType).
@@ -49,7 +49,7 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.F
 		Find(&files); err != nil {
 		return nil, err
 	}
-
+	// 获取文件下载链接
 	zs, redisErr := rdb.ZRevRangeWithScores(l.ctx, key, 0, -1).Result()
 	if redisErr != nil && redisErr != redis2.Nil {
 		logx.Errorf("通过类型获取文件列表，redis获取set失败，err: %v", redisErr)
@@ -61,7 +61,7 @@ func (l *ListFileByTypeLogic) ListFileByType(req *types.FileTypeReq) ([]*types.F
 		if len(zs) == len(files) && redisErr == nil {
 			url = zs[i].Member.(string)
 		} else {
-			url2, err := minioSvc.GenUrl(file.ObjectName, true)
+			url2, err := minioSvc.GenUrl(file.ObjectName, file.Name, true)
 			if err != nil {
 				logx.Errorf("通过类型获取文件列表，[%d]获取url失败，err: %v", file.ObjectName, redisErr)
 			} else {

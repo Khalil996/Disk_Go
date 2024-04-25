@@ -57,7 +57,7 @@ func (l *UpdateAvatarLogic) UpdateAvatar(fileParam *types.FileParam) (interface{
 			return nil, err
 		}
 
-		url, urlErr = minioSvc.GenUrl(objectName, false)
+		url, urlErr = minioSvc.GenUrl(objectName, "", false)
 
 		return nil, nil
 	})

@@ -5,6 +5,18 @@ type (
     IdsReq {
         Ids []int64 `json:"ids"`
     }
+    IdStrReq {
+        Id string `path:"id"`
+    }
+
+    IdStrsReq {
+        Ids []string `json:"ids"`
+    }
+
+    PageReq {
+        Page int64 `json:"page"`
+        Size int64 `json:"size"`
+    }
 
     UpdateNameReq {
         Id int64 `json:"id"`
@@ -60,7 +72,31 @@ type (
     }
 
     RecoverFilesReq {
-        Files []*RecoverFilesStruct `json:"files"`
+        FileIds []int64 `json:"fileIds"`
+        FolderIds []int64 `json:"folderIds"`
+    }
+
+    ShareReq {
+        FileIds []int64 `json:"fileIds"`
+        ShareStruct
+    }
+
+    ShareFolderReq {
+        FolderIds []int64 `json:"folderIds"`
+        ShareStruct
+    }
+
+    SearchReq {
+        Phrase string `form:"phrase"`
+    }
+
+    ReportReq {
+        ShareId string `json:"shareId"`
+        Reason string `json:"reason"`
+    }
+
+    DFReq {
+        FolderIds []int64 `json:"folderIds"`
     }
 )
 
@@ -71,7 +107,7 @@ type (
         Url string `json:"url"`
         Status int8 `json:"status"`
         Size int64 `json:"size"`
-        FolderId int64 `json:"folderId,omitempty"`
+        FolderId int64 `json:"folderId"`
         FolderName string `json:"folderName"`
         DelTime int64 `json:"delTime"`
     }
@@ -84,9 +120,17 @@ type (
         Ext string `json:"ext"`
         Status int8 `json:"status"`
         Size int64 `json:"size"`
-        FolderId int64 `json:"folderId,omitempty"`
+        FolderId int64 `json:"folderId"`
         Created string `json:"created"`
         Updated string `json:"updated"`
+    }
+
+    GetShareInfoResp {
+        Name string `json:"name"`
+        Created string `json:"created"`
+        Expired int64 `json:"expired"`
+        Owner int64 `json:"owner"`
+        Items []*ListShareItemStruct `json:"items"`
     }
 )
 
@@ -108,5 +152,36 @@ type (
     RecoverFilesStruct {
         FileId int64 `json:"fileId"`
         FolderId int64 `json:"folderId"`
+    }
+
+    ListShareStruct {
+        Id string `json:"id"`
+        Pwd string `json:"pwd"`
+        Name string `json:"name"`
+        Created string `json:"created"`
+        Expired int64 `json:"expired"`
+        Status int8 `json:"status"`
+        DownloadNum int64 `json:"downloadNum"`
+        ClickNum int64 `json:"clickNum"`
+        Type int8 `json:"type"`
+        Url string  `json:"url"`
+    }
+
+    ShareStruct {
+        Pwd string `json:"pwd"`
+        Prefix string `json:"prefix"`
+        ExpireType int8 `json:"expireType"`
+        Auto int8 `json:"auto"`
+    }
+
+    ListShareItemStruct {
+        Id int64 `json:"id"`
+        Type int8 `json:"type"`
+        Name string `json:"name"`
+        Updated string `json:"updated"`
+        Size int64 `json:"size"`
+        Url string `json:"url"`
+        Status int8 `json:"status"`
+        DelFlag int8 `json:"delFlag"`
     }
 )

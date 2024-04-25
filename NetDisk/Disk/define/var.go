@@ -5,8 +5,16 @@ import (
 )
 
 var (
-	Upattern, _ = regexp.Compile("^[a-zA-Z0-9]{6,20}$")
+	Upattern, _ = regexp.Compile("^[a-zA-Z0-9]{4,20}$")
 	Ppattern, _ = regexp.Compile("^[a-zA-Z0-9!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~]{6,20}$")
+
+	BanM = map[int8]string{
+		StatusUserBannedByName:      "昵称",
+		StatusUserBannedByUsername:  "用户名",
+		StatusUserBannedBySignature: "签名",
+		StatusUserBannedByAvatar:    "头像",
+		StatusUserBannedByShare:     "分享",
+	}
 )
 
 var (
@@ -19,6 +27,7 @@ var (
 		".pptx": true,
 		".pdf":  true,
 		".txt":  true,
+		".md":   true,
 	}
 
 	ImageSuffix = map[string]bool{
@@ -72,4 +81,41 @@ func GetTypeByBruteForce(ext string) int8 {
 	} else {
 		return TypeOther
 	}
+}
+
+var ShareExpireType = map[int8]int64{
+	ShareExpireDay:     86400,
+	ShareExpireWeek:    604800,
+	ShareExpireMonth:   2592000,
+	ShareExpireForever: 0,
+}
+
+var OperationM = map[string]string{
+	"Login":               "账号：%v 登录了",
+	"Upload":              "上传了文件，文件id：%v",
+	"CopyFiles":           "复制文件id：%v",
+	"CreateFolder":        "创建了文件夹，名称：%v",
+	"DeleteAllFilesTruly": "清空了回收站",
+	"DeleteFiles":         "删除了文件，文件id：%v",
+	"DeleteFilesTruly":    "删除了回收站文件，文件id：%v",
+	"DeleteFolders":       "删除文件夹，文件夹id：%v",
+	"MoveFiles":           "移动了文件，文件id：%v",
+	"MoveFolders":         "移动了文件夹，文件夹id：%v",
+	"RecoverFiles":        "恢复了文件id：%v",
+	"ShareCancel":         "取消了分享，分享id：%v",
+	"ShareFolder":         "分享了文件夹，分享的文件夹id：%v",
+	"Share":               "分享了文件，分享的文件id：%v",
+	"UpdateFile":          "修改了文件名，文件id：%v",
+	"UpdateFolder":        "修改了文件夹名，文件夹id：%v",
+	"AdminLogin":          "管理员账号：%v 登录了",
+	"SetFileStatus":       "管理员设置文件状态：%v",
+	"SetShareStatus":      "管理员设置分享状态：%v",
+	"SetUserStatus":       "设置用户状态：%v",
+	"SetAdminStatus":      "设置管理员状态：%v",
+	"MergeLogic":          "分片文件合并任务开始，时间：%v",
+	"Search":              "搜索文件，搜索词条：%v",
+	"UpdateDetail":        "更新信息：%v",
+	"UpdateAvatar":        "更新头像：%v",
+	"AddAdmin":            "新增了管理员：%v",
+	"DeleteAdmin":         "删除了管理员：%v",
 }

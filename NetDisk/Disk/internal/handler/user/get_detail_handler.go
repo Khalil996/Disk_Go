@@ -1,8 +1,11 @@
 package user
 
 import (
+	"cloud_go/Disk/common"
+	"cloud_go/Disk/common/redis"
 	xhttp "github.com/zeromicro/x/http"
 	"net/http"
+	"strconv"
 
 	"cloud_go/Disk/internal/logic/user"
 	"cloud_go/Disk/internal/svc"
@@ -18,8 +21,31 @@ func GetDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
+		var userId int64
+		token := r.Header.Get("Authorization")
+		if token != "" {
+			if redis.Redis == nil {
+				return
+			}
+
+			claim, err := common.AnalyzeToken(token)
+			if err != nil {
+				httpx.WriteJson(w, http.StatusUnauthorized, "身份认证错误或过期，请重新登录!")
+				return
+			}
+
+			userId = claim.Id
+			key := redis.UserLogin + strconv.FormatInt(userId, 10)
+
+			redisToken, err := redis.Redis.Get(r.Context(), key).Result()
+			if redisToken != token {
+				httpx.WriteJson(w, http.StatusUnauthorized, "身份认证过期，请重新登录!")
+				return
+			}
+		}
+
 		l := user.NewGetDetailLogic(r.Context(), svcCtx)
-		if resp, err := l.GetDetail(&req); err != nil {
+		if resp, err := l.GetDetail(&req, userId); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, resp)

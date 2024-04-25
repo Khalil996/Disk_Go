@@ -57,11 +57,14 @@ func (l *ListFileLogic) ListFile(req *types.ParentFolderIdReq) ([]*types.FileRes
 
 	var urls []redis2.Z
 	for i, file := range files {
+		if file.Status == define.StatusFileNeedMerge {
+			continue
+		}
 		var url string
 		if len(zs) == len(files) && redisErr == nil {
 			url = zs[i].Member.(string)
 		} else {
-			url2, err := minioSvc.GenUrl(file.ObjectName, true)
+			url2, err := minioSvc.GenUrl(file.ObjectName, file.Name, true)
 			if err != nil {
 				logx.Errorf("通过文件夹id获取文件列表，[%d]获取url失败，ERR: [%v]", file.Id, err)
 			} else {

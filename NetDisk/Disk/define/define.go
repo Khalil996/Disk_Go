@@ -11,10 +11,10 @@ type UserClaim struct {
 var JwtKey = "Disk-key"
 
 // token过期时间
-var TokenExpire = 7200
+var TokenExpire = 72000
 
 // token刷新过期时间
-var RefreshTokenExpire = 7200
+var RefreshTokenExpire = 72000
 
 // 验证码长度
 var CodeLength = 6
@@ -31,7 +31,7 @@ const (
 	ShardingFloor float64 = 20971520 // 需要分片起始大小：20MB
 	ShardingSize  float64 = 5242880  // 分片大小： 5MB
 
-	DefaultCapacity = 1099511627776 //用户容量
+	DefaultCapacity = 1099511627776
 )
 
 const (
@@ -45,6 +45,8 @@ const (
 	StatusFileUploaded
 	StatusFileUndeleted
 	StatusFileDeleted
+	StatusFileIllegal
+	StatusFileNeedMerge
 )
 
 const (
@@ -54,9 +56,8 @@ const (
 
 // 0：大文件未上传，1：大文件待合并，2：小文件未上传，3：上传成功
 const (
-	StatusFsBigFileUnuploaded int8 = iota
-	StatusFsBigFileNeedMerge
-	StatusFsFileUnuploaded
+	StatusFsFileUnuploaded int8 = iota
+	StatusFsFileNeedMerge
 	StatusFsUploaded
 )
 
@@ -65,10 +66,36 @@ const (
 	StatusFolderDeleted
 )
 
-// context keys
 const (
-	CtxFolderIdsKey = "folderIds"
-	CtxFileIdsKey   = "fileIds"
+	StatusShareNotExpired = iota
+	StatusShareExpired
+	StatusShareIllegal
+	StatusShareNotExistOrDeleted
+	StatusShareForever
+)
+
+const (
+	ShareExpireDay = iota
+	ShareExpireWeek
+	ShareExpireMonth
+	ShareExpireForever
+)
+
+const (
+	StatusUserOk = iota
+	StatusUserBannedByAvatar
+	StatusUserBannedByUsername
+	StatusUserBannedByName
+	StatusUserBannedBySignature
+	StatusUserBannedByShare
+
+	BanStr = "您因%v违规而被封禁，暂时无法登录"
+)
+
+const (
+	StageMerging = iota
+	StageNeedMerge
+	StageMergeDone
 )
 
 const (
@@ -82,4 +109,21 @@ const (
 	TypeVideo
 	TypeAudio
 	TypeOther
+	TypeShareMulti
+)
+
+const (
+	StatusAdminNormal = iota
+	StatusAdminSuper
+	StatusAdminBanned
+)
+
+const (
+	Operation = "用户，ID：[%v]，昵称：[%v]，%v"
+)
+
+const (
+	FlagSyncDone int8 = iota
+	FlagSyncWrite
+	FlagSyncDelete
 )

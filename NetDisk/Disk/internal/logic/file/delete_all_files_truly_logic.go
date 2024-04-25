@@ -2,6 +2,7 @@ package file
 
 import (
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
@@ -30,7 +31,10 @@ func (l *DeleteAllFilesTrulyLogic) DeleteAllFilesTruly() error {
 		userId = l.ctx.Value(define.UserIdKey).(int64)
 		engine = l.svcCtx.Engine
 		files  []*models.File
+		err    error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "DeleteAllFilesTruly")
 
 	if err := engine.Where("user_id = ?", userId).
 		And("del_flag = ?", define.StatusFileDeleted).

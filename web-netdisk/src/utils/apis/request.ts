@@ -45,10 +45,10 @@ api.interceptors.response.use(
         }
 
         if (
-            code.toString() &&
-            code.toString() !== "0" &&
-            code.toString() !== "401" &&
-            code.toString() !== "403"
+            code &&
+            code !== 0 &&
+            code !== 401 &&
+            code !== 403
         ) {
             promptError(message)
             return Promise.reject(resp.data)

@@ -70,6 +70,7 @@ func (l *CheckFileLogic) doWhenNotExist(req *types.CheckFileReq) (*types.CheckFi
 	if req.Size > int64(define.ShardingFloor) {
 		resp.ConfirmShard = define.ConfirmShard
 		key = redis.UploadCheckBigFileKey + fileIdStr
+		//进行分块处理
 		fileInfo["chunkNum"] = math.Ceil(float64(req.Size) / define.ShardingSize)
 		fileInfo["chunkSum"] = 0
 		if _, err := rdb.HSet(l.ctx, key, fileInfo).Result(); err != nil {
@@ -92,15 +93,24 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *models.Fil
 	)
 
 	// 先判断该用户在该目录下有无该文件
-	has, err := engine.Where("fs_id = ?", fileFs.Id).
-		And("folder_id = ?", req.FolderId).
-		And("user_id = ?", userId).Get(&file)
+	_, err := engine.Where("fs_id = ?", fileFs.Id).
+		And("folder_id = ?", req.FolderId).And("user_id = ?", userId).Get(&file)
 	if err != nil {
 		return nil, err
-	} else if has {
-		return nil, errors.New("当前文件夹已存在该文件😈")
+
 	}
 
+	if file.Id != 0 {
+		if file.Status != define.StatusFileDeleted && file.Status != define.StatusFileNeedMerge {
+			return nil, errors.New("当前文件夹已存在该文件😈")
+		}
+	}
+	if file.Status == define.StatusFileNeedMerge {
+		resp.FileId = file.Id
+		resp.ConfirmShard = define.ConfirmShard
+		resp.Status = define.StatusFileUnuploaded
+		return &resp, nil
+	}
 	// 该文件夹无该文件，信息落库
 	isBigFlag := define.SmallFileFlag
 	if fileFs.Size > int64(define.ShardingFloor) {
@@ -112,15 +122,15 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *models.Fil
 	file.FolderId = req.FolderId
 	file.Type = define.GetTypeByBruteForce(req.Ext)
 	file.Status = define.StatusFileUploaded
-	file.Url = fileFs.Url
 	file.ObjectName = fileFs.ObjectName
 	file.IsBig = isBigFlag
 	file.DoneAt = time.Now().Local()
 	file.DelFlag = define.StatusFileUndeleted
+	file.SyncFlag = define.FlagSyncWrite
 	if fileFs.Size > int64(define.ShardingFloor) {
 		file.IsBig = define.BigFileFlag
 	}
-	if _, err = engine.Insert(&file); err != nil {
+	if _, err := engine.Insert(&file); err != nil {
 		return nil, err
 	}
 

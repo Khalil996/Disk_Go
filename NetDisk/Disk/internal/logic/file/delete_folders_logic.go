@@ -2,6 +2,7 @@ package file
 
 import (
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
@@ -33,10 +34,12 @@ func (l *DeleteFoldersLogic) DeleteFolders(req *types.IdsReq) error {
 	var (
 		userId = l.ctx.Value(define.UserIdKey).(int64)
 		engine = l.svcCtx.Engine
+		err    error
 	)
 
+	defer mqs.LogSend(l.ctx, err, "DeleteFolders", req.Ids)
 	folderIds := req.Ids
-	_, err := engine.Transaction(func(session *xorm.Session) (interface{}, error) {
+	_, err = engine.Transaction(func(session *xorm.Session) (interface{}, error) {
 		var (
 			folders []*models.Folder
 			err     error

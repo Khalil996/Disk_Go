@@ -2,6 +2,7 @@ package file
 
 import (
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
@@ -30,8 +31,12 @@ func (l *MoveFoldersLogic) MoveFolders(req *types.MoveFoldersReq) error {
 	// todo: add your logic here and delete this line
 	userId := l.ctx.Value(define.UserIdKey).(int64)
 	parentFolderId := req.ParentFolderId
-	var folder = &models.Folder{}
+	var (
+		err    error
+		folder = &models.Folder{}
+	)
 
+	defer mqs.LogSend(l.ctx, err, "MoveFolders", req.FolderIds, req.ParentFolderId)
 	if parentFolderId != 0 {
 		has, err := l.svcCtx.Engine.ID(parentFolderId).And("user_id = ?", userId).Get(folder)
 		if err != nil {

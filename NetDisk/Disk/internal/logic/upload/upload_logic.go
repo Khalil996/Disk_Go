@@ -4,6 +4,7 @@ import (
 	"cloud_go/Disk/common/redis"
 	"cloud_go/Disk/common/xorm"
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/internal/svc"
 	"cloud_go/Disk/internal/types"
 	"cloud_go/Disk/models"
@@ -36,7 +37,10 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 		userId = l.ctx.Value(define.UserIdKey).(int64)
 		engine = l.svcCtx.Engine
 		rdb    = l.svcCtx.RDB
+		err    error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "Upload", req.FileId, fileParam.FileHeader.Size)
 
 	fileIdStr := strconv.FormatInt(req.FileId, 10)
 	key := redis.UploadCheckKey + fileIdStr
@@ -54,11 +58,9 @@ func (l *UploadLogic) Upload(req *types.UploadReq, fileParam *types.FileParam) (
 
 	folderId := fileInfo["folderId"]
 	if folderId != "0" {
-		if has, err := engine.Where("id = ?", folderId).
-			Exist(&models.FileFs{}); err != nil {
+		if _, err := engine.Where("id = ?", folderId).
+			Exist(&models.File{}); err != nil {
 			return nil, err
-		} else if !has {
-			return nil, errors.New("信息有误3")
 		}
 	}
 
@@ -85,7 +87,6 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 		fileFs.Ext = fileInfo["ext"]
 		fileFs.Hash = fileInfo["hash"]
 		fileFs.Size = size
-		fileFs.Url = ""
 		fileFs.Status = define.StatusFsUploaded
 		if _, err := session.Insert(fileFs); err != nil {
 			return nil, err
@@ -95,7 +96,6 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 		folderId, _ := strconv.ParseInt(fileInfo["folderId"], 10, 64)
 		file := &models.File{}
 		file.Name = fileInfo["name"]
-		file.Url = ""
 		file.ObjectName = objectName
 		file.Size = size
 		file.Ext = fileInfo["ext"]
@@ -107,6 +107,7 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 		file.DoneAt = time.Now().Local()
 		file.Status = define.StatusFileUploaded
 		file.DelFlag = define.StatusFileUndeleted
+		file.SyncFlag = define.FlagSyncWrite
 		if _, err := session.Insert(file); err != nil {
 			return nil, err
 		}

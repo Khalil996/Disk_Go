@@ -3,7 +3,8 @@ import type {Resp} from '../../utils/apis/base.ts';
 import type {File} from './file.ts'
 
 export function search(str: string) {
-    return api.post<any, Resp<File>>(`/search`, {str})
+    const encodedStr = encodeURIComponent(str);
+    return api.get<any, Resp<any>>(`/file/search?phrase=${str}`)
 }
 
 export function getFileDetailById(id: number) {

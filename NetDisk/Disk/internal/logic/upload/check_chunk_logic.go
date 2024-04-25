@@ -29,21 +29,25 @@ func NewCheckChunkLogic(ctx context.Context, svcCtx *svc.ServiceContext) *CheckC
 // 检查分块是否上传过
 func (l *CheckChunkLogic) CheckChunk(req *types.CheckChunkReq) (*types.CheckChunkResp, error) {
 	// todo: add your logic here and delete this line
+	//判断之前是否写入文件数据
 	var resp = &types.CheckChunkResp{Status: 0}
 	fileIdStr := strconv.FormatInt(req.FileId, 10)
 	_, err := l.svcCtx.RDB.Exists(l.ctx, redis.UploadCheckBigFileKey+fileIdStr).Result()
 	if err != nil {
 		return nil, err
 	}
+	//检查是否已上传
 	objectName := l.svcCtx.Minio.GenChunkObjectName(req.Hash, req.ChunkSeq)
-	exist, err := l.svcCtx.Minio.NewService().IfExist(objectName)
+	exist, _, err := l.svcCtx.Minio.NewService().IfExist(objectName)
 	if err != nil {
 		return resp, err
 	} else if exist {
 		resp.Status = 1
 		return resp, nil
 	}
-	if err = l.svcCtx.RDB.Set(l.ctx, fmt.Sprintf(redis.UploadCheckChunkKeyF, req.FileId, req.ChunkSeq), objectName, redis.UploadCheckChunkExpire).Err(); err != nil {
+	//分片创建一个key
+	if err = l.svcCtx.RDB.Set(l.ctx, fmt.Sprintf(redis.UploadCheckChunkKeyF, req.FileId, req.ChunkSeq),
+		objectName, redis.UploadCheckChunkExpire).Err(); err != nil {
 		return nil, err
 	}
 	return resp, nil

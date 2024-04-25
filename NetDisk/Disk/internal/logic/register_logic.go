@@ -3,15 +3,14 @@ package logic
 import (
 	"cloud_go/Disk/common"
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/svc"
+	"cloud_go/Disk/internal/types"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
 	"log"
 	"math/rand"
 	"strconv"
-
-	"cloud_go/Disk/internal/svc"
-	"cloud_go/Disk/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -59,7 +58,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		Name:     Name,
 		Email:    req.Email,
 		Status:   0,
-		IsAdmin:  0,
+
 		Used:     0,
 		Capacity: define.DefaultCapacity,
 	}

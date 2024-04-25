@@ -42,7 +42,7 @@ func (l *GetFileDetailLogic) GetFileDetail(req *types.IdPathReq) (*types.FileRes
 		return nil, errors.New("未能找到该文件信息！😿")
 	}
 
-	url, err := minioSvc.GenUrl(file.ObjectName, false)
+	url, err := minioSvc.GenUrl(file.ObjectName, file.Name, false)
 	if err != nil {
 		return nil, err
 	}

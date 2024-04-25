@@ -2,9 +2,11 @@ package file
 
 import (
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
+	"fmt"
 	"log"
 
 	"cloud_go/Disk/internal/svc"
@@ -29,6 +31,10 @@ func NewCreateFolderLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Crea
 
 func (l *CreateFolderLogic) CreateFolder(req *types.CreateFolderReq) error {
 	// todo: add your logic here and delete this line
+	var err error
+
+	defer mqs.LogSend(l.ctx, err, "CreateFolder", req.Name)
+
 	userId := l.ctx.Value(define.UserIdKey).(int64)
 	log.Println("UserId from context:", userId)
 	folder := &models.Folder{}
@@ -43,18 +49,31 @@ func (l *CreateFolderLogic) CreateFolder(req *types.CreateFolderReq) error {
 		}
 	}
 
-	if exist, err := l.svcCtx.Engine.Where("name = ?", req.Name).
-		And("parent_id = ?", req.ParentFolderId).
-		And("del_flag=?", define.StatusFolderUndeleted).Exist(folder); err != nil {
-		logx.Errorf("创建文件夹查询同名文件夹是否存在出错，err: %v", err)
-		return errors.New("发生错误，" + err.Error())
-	} else if exist {
-		return errors.New("文件夹名称已存在！")
+	baseName := req.Name
+	newName := baseName
+	suffix := 0
+
+	for {
+		// 检查当前生成的名称是否存在
+		exist, err := l.svcCtx.Engine.Where("name = ?", newName).
+			And("parent_id = ?", req.ParentFolderId).Exist(new(models.Folder))
+		if err != nil {
+			logx.Errorf("检查文件夹名称是否存在时出错，err: %v", err)
+			return errors.New("发生错误，" + err.Error())
+		}
+
+		// 如果存在，生成新的名称并重新检查
+		if exist {
+			suffix++                                        // 增加数字后缀
+			newName = fmt.Sprintf("%s%d", baseName, suffix) // 生成新的名称
+		} else {
+			break // 找到了一个不存在的名称，跳出循环
+		}
 	}
 
 	newFolder := &models.Folder{
 		ParentId: req.ParentFolderId,
-		Name:     req.Name,
+		Name:     newName,
 		UserId:   userId,
 		DelFlag:  define.StatusFolderUndeleted,
 	}

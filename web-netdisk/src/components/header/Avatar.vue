@@ -1,4 +1,6 @@
 <template>
+  <img src="@/assets/ji_tui_cai.png" alt="" style="overflow: hidden;position: absolute;top: 0;left: 0"/>
+  <span style="font: 800 24px Arial, sans-serif;color: snow;position: absolute;top: 15px;left: 6%">咪咪网盘</span>
   <el-row class="el-row">
     <el-col :span="23">
       <div class="grid-content ep-bg-purple"></div>
@@ -6,10 +8,14 @@
     <el-col :span="1">
       <div class="grid-content ep-bg-purple-light">
         <div class="demo-basic--circle">
-          <el-popover
-              placement="top-start"
-              width="10vw"
-              trigger="hover"
+          <el-button v-if="!loginState" @click="toLogin">
+            登录
+          </el-button>
+
+          <el-popover v-if="loginState"
+                      placement="top-start"
+                      width="15vw"
+                      trigger="hover"
           >
             <template #reference>
               <div class="block head-pic">
@@ -63,7 +69,8 @@ let user = reactive({
     percentage = ref(0),
     status = ref('success'),
     used = ref(''),
-    capacity = ref('')
+    capacity = ref(''),
+    loginState = ref(false)
 
 async function showUserInfo() {
   if (user.data.id === 0) {
@@ -82,8 +89,18 @@ function toFileFolder() {
   window.location.href = '/info/user'
 }
 
-onMounted(() => {
-  showUserInfo()
+
+
+function toLogin() {
+  window.location.href = '/login'
+}
+onMounted(async () => {
+  if (baseStore.getToken() === '') {
+    loginState.value = false
+  } else {
+    await showUserInfo()
+    loginState.value = true
+  }
 })
 
 </script>

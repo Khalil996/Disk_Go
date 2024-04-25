@@ -12,12 +12,14 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
+// ListDeletedFilesLogic 用于处理删除文件列表的逻辑
 type ListDeletedFilesLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
+// NewListDeletedFilesLogic 创建ListDeletedFilesLogic实例
 func NewListDeletedFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ListDeletedFilesLogic {
 	return &ListDeletedFilesLogic{
 		Logger: logx.WithContext(ctx),
@@ -26,12 +28,14 @@ func NewListDeletedFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 	}
 }
 
+// ListDeletedFiles 列出删除的文件
 func (l *ListDeletedFilesLogic) ListDeletedFiles() (resp []*types.DeletedFilesResp, err error) {
 	// todo: add your logic here and delete this line
 	userId := l.ctx.Value(define.UserIdKey).(int64)
 	var files []*models.File
 	var folders []*models.Folder
-	if err = l.svcCtx.Engine.Select("id, name, url, del_time").Where("user_id = ?", userId).
+	//查找文件
+	if err = l.svcCtx.Engine.Where("user_id = ?", userId).
 		And("del_flag = ?", define.StatusFileDeleted).Asc("del_time").
 		Find(&files); err != nil {
 		return nil, err
@@ -50,7 +54,7 @@ func (l *ListDeletedFilesLogic) ListDeletedFiles() (resp []*types.DeletedFilesRe
 	}
 
 	if err = l.svcCtx.Engine.Select("id, name").In("id", folderIds).
-		And("del_flag = ?", define.StatusFolderUndeleted).
+		//And("del_flag = ?", define.StatusFolderUndeleted).
 		Find(&folders); err != nil {
 		return nil, err
 	}
@@ -64,7 +68,6 @@ func (l *ListDeletedFilesLogic) ListDeletedFiles() (resp []*types.DeletedFilesRe
 		resp = append(resp, &types.DeletedFilesResp{
 			Id:         file.Id,
 			Name:       file.Name,
-			Url:        file.Url,
 			Status:     file.Status,
 			Size:       file.Size,
 			FolderId:   file.FolderId,

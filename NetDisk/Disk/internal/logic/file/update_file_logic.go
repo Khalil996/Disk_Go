@@ -2,9 +2,10 @@ package file
 
 import (
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/models"
 	"context"
-	"errors"
+	"strings"
 
 	"cloud_go/Disk/internal/svc"
 	"cloud_go/Disk/internal/types"
@@ -30,12 +31,16 @@ func (l *UpdateFileLogic) UpdateFile(req *types.UpdateNameReq) error {
 	// todo: add your logic here and delete this line
 
 	userId := l.ctx.Value(define.UserIdKey).(int64)
+	var err error
+	defer mqs.LogSend(l.ctx, err, "UpdateFile", req.Id, req.Name)
 
-	affected, err := l.svcCtx.Engine.ID(req.Id).And("user_id=?", userId).Update(&models.File{Name: req.Name})
-	if err != nil {
+	ext := req.Name[strings.LastIndex(req.Name, "."):]
+	fType := define.GetTypeByBruteForce(ext)
+	file := &models.File{Name: req.Name, Type: fType}
+	if _, err = l.svcCtx.Engine.ID(req.Id).
+		And("user_id = ?", userId).
+		Update(file); err != nil {
 		return err
-	} else if affected != 1 {
-		return errors.New("更新失败")
 	}
 	return nil
 }

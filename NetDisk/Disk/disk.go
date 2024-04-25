@@ -1,8 +1,10 @@
 package main
 
 import (
+	"cloud_go/Disk/common/cron"
 	"cloud_go/Disk/internal/config"
 	"cloud_go/Disk/internal/handler"
+	"cloud_go/Disk/internal/logic/mqs/mqc"
 	"cloud_go/Disk/internal/middleware"
 	"cloud_go/Disk/internal/svc"
 	"context"
@@ -11,6 +13,7 @@ import (
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logc"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/service"
 	"github.com/zeromicro/go-zero/rest"
 )
 
@@ -36,9 +39,18 @@ func main() {
 	defer server.Stop()
 	server.Use(middleware.HandleCors)
 
-	ctx := svc.NewServiceContext(c)
-	handler.RegisterHandlers(server, ctx)
+	svcCtx := svc.NewServiceContext(c)
+	handler.RegisterHandlers(server, svcCtx)
+
+	svcGroup := service.NewServiceGroup()
+	svcGroup.Add(server)
+	for _, mq := range mqc.Consumers(c, context.Background(), svcCtx) {
+		svcGroup.Add(mq)
+	}
+
+	cron.MergeTask()
+	cron.SyncTask()
 
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
-	server.Start()
+	svcGroup.Start()
 }

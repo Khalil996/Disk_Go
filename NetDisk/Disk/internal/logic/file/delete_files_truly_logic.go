@@ -2,6 +2,7 @@ package file
 
 import (
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
@@ -28,9 +29,11 @@ func NewDeleteFilesTrulyLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 
 func (l *DeleteFilesTrulyLogic) DeleteFilesTruly(req *types.IdsReq) error {
 	// todo: add your logic here and delete this line
+	var err error
+	defer mqs.LogSend(l.ctx, err, "DeleteFilesTruly", req.Ids)
 	userId := l.ctx.Value(define.UserIdKey).(int64)
 	var files []models.File
-	err := l.svcCtx.Engine.Cols("id").In("id", req).And("user_id=?", userId).And("del_flag=?", define.StatusFileDeleted).Find(&files)
+	err = l.svcCtx.Engine.In("id", req.Ids).And("user_id=?", userId).And("del_flag=?", define.StatusFileDeleted).Find(&files)
 	if err != nil {
 		return err
 	}

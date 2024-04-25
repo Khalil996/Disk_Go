@@ -3,6 +3,7 @@ package file
 import (
 	"cloud_go/Disk/common/redis"
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
@@ -36,7 +37,10 @@ func (l *DeleteFilesLogic) DeleteFiles(req *types.DeleteFilesReq) error {
 		userId = l.ctx.Value(define.UserIdKey).(int64)
 		engine = l.svcCtx.Engine
 		rdb    = l.svcCtx.RDB
+		err    error
 	)
+
+	defer mqs.LogSend(l.ctx, err, "DeleteFiles", req.FileIds)
 
 	bean := &models.File{
 		DelFlag: define.StatusFileDeleted,

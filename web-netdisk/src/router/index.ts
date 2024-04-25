@@ -35,12 +35,12 @@ const routes = [
             },
             {
                 path: 'share',
-                component: () => import('@/components/files/Share/Share.vue'),
+                component: () => import('@/components/files/share/Share.vue'),
                 props: true,
             },
             {
                 path: 'share-info',
-                component: () => import('@/components/files/Share/Info.vue'),
+                component: () => import('@/components/files/share/Info.vue'),
                 props: true,
             }
         ]
@@ -56,8 +56,9 @@ const routes = [
                 props: true,
             },
             {
-                path: 'share',
-                component: () => import('@/components/files/Share/Info.vue')
+                path: 'share/:shareId',
+                component: () => import('@/components/files/share/Info.vue'),
+                props:true,
             }
         ]
     }

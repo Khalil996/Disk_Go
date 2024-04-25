@@ -1,7 +1,7 @@
 <template>
     <el-form :model="form" label-width="120px">
         <el-form-item label="账号" size="large">
-            <el-input v-model="form.data.username"/>
+            <el-input v-model="form.data.name"/>
         </el-form-item>
         <el-form-item label="密码" size="large">
             <el-input v-model="form.data.password"/>
@@ -30,7 +30,7 @@ import {sendCode2Email} from "@/utils/util.ts";
 
 let form = reactive({
   data: {
-    username: '',
+    name: '',
     password: '',
     email: '',
     code: ''

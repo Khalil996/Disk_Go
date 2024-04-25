@@ -2,6 +2,7 @@ package file
 
 import (
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
@@ -32,6 +33,9 @@ func (l *CopyFilesLogic) CopyFiles(req *types.CopyFilesReq) error {
 	// todo: add your logic here and delete this line
 	UserId := l.ctx.Value(define.UserIdKey).(int64)
 	folderId := req.FolderId
+	var err error
+	defer mqs.LogSend(l.ctx, err, "CopyFiles", req.FileIds)
+
 	var files []*models.File
 	if folderId != 0 {
 		has, err := l.svcCtx.Engine.ID(folderId).And("user_id = ?", UserId).Get(&models.Folder{})
@@ -41,7 +45,7 @@ func (l *CopyFilesLogic) CopyFiles(req *types.CopyFilesReq) error {
 			return errors.New("文件夹不存在")
 		}
 	}
-	err := l.svcCtx.Engine.In("id", req.FileIds).Find(&files)
+	err = l.svcCtx.Engine.In("id", req.FileIds).Find(&files)
 	if err != nil {
 		return errors.New("发生错误" + err.Error())
 	}

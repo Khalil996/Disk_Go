@@ -19,7 +19,6 @@ func CheckSizeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := download.NewCheckSizeLogic(r.Context(), svcCtx)
-
 		if resp, err := l.CheckSize(&req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {

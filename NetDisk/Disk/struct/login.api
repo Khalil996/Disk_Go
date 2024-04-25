@@ -20,7 +20,7 @@ type (
         Signature string  `json:"signature"`
     }
 
-    registerReq {
+    RegisterReq {
         //用户名
         Name string `json:"name"`
         // 密码
@@ -30,6 +30,7 @@ type (
         // 验证码
         Code string `json:"code"`
     }
+
     registerRes {}
 
     EmailSendReq {

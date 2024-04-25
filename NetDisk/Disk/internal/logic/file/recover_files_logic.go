@@ -3,13 +3,14 @@ package file
 import (
 	"cloud_go/Disk/common/xorm"
 	"cloud_go/Disk/define"
+	"cloud_go/Disk/internal/logic/mqs"
+	"cloud_go/Disk/internal/svc"
+	"cloud_go/Disk/internal/types"
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
-	"time"
-
-	"cloud_go/Disk/internal/svc"
 	"github.com/zeromicro/go-zero/core/logx"
+	"strconv"
 )
 
 type RecoverFilesLogic struct {
@@ -26,19 +27,24 @@ func NewRecoverFilesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Reco
 	}
 }
 
-func (l *RecoverFilesLogic) RecoverFiles(fileIds, folderIds []int64) error {
+func (l *RecoverFilesLogic) RecoverFiles(req *types.RecoverFilesReq) error {
 	// todo: add your logic here and delete this line
 	var (
 		ctx    = l.ctx
 		userId = ctx.Value(define.UserIdKey).(int64)
 		engine = l.svcCtx.Engine
+		err    error
 	)
+	defer mqs.LogSend(l.ctx, err, "RecoverFiles", req.FileIds)
 
-	_, err := engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
+	fileIds, folderIds := req.FileIds, req.FolderIds
+	_, err = engine.DoTransaction(func(session *xorm.Session) (interface{}, error) {
+		engine.ShowSQL(true)
 		// 1.恢复文件delFlag字段
 		fileBean := &models.File{
-			DelFlag: define.StatusFileUndeleted,
-			DelTime: time.Now().Local().Unix(),
+			DelFlag:  define.StatusFileUndeleted,
+			DelTime:  0,
+			SyncFlag: define.FlagSyncWrite,
 		}
 		if affected, err := session.In("id", fileIds).
 			And("user_id = ?", userId).
@@ -53,22 +59,26 @@ func (l *RecoverFilesLogic) RecoverFiles(fileIds, folderIds []int64) error {
 			// 2.恢复文件夹delFlag字段
 			folderBean := &models.Folder{
 				DelFlag: define.StatusFolderUndeleted,
-				DelTime: time.Now().Local().Unix(),
+				DelTime: 0,
 			}
-			if affected, err := session.In("id", folderIds).
+			if _, err := session.Cols("del_flag", "del_time").In("id", folderIds).
 				And("del_flag = ?", define.StatusFolderDeleted).
 				Update(folderBean); err != nil {
 				logx.Errorf("恢复文件夹信息出错，err: %v", err)
 				return nil, err
-			} else if affected != int64(len(folderIds)) {
-				return nil, errors.New("恢复文件夹信息出错！")
 			}
-
 			// 3.查询父文件夹
 			var ids []int64
+			subQuery := "select distinct(parent_id) from folder where id in ("
+			for i, folderId := range folderIds {
+				subQuery += strconv.FormatInt(folderId, 10)
+				if i != len(folderIds)-1 {
+					subQuery += ","
+				}
+			}
 			if err := session.Select("id").
-				Where("id in ( select distinct(parent_id) "+
-					"where id in (?) )", folderIds).
+				Table(&models.Folder{}).
+				Where("id in("+subQuery+") )").
 				And("del_flag = ?", define.StatusFolderDeleted).
 				Find(&ids); err != nil {
 				logx.Errorf("查询父文件夹出错，err: %v", err)

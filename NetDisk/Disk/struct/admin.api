@@ -1,0 +1,30 @@
+
+type (
+    SetStatusReq {
+        Id int64 `json:"id"`
+        Status int8 `json:"status"`
+    }
+
+    SetShareStatusReq {
+        Id string `json:"id"`
+        Status int8 `json:"status"`
+        Type int8 `json:"type"`
+    }
+
+    SetFileStatusReq {
+        Ids []int64 `json:"ids"`
+        Status int8 `json:"status"`
+    }
+
+    GetUrlReq {
+        Id string `path:"id"`
+        Type int8 `path:"type"`
+    }
+
+    AddAdminReq {
+        Username string `json:"username"`
+        Password string `json:"password"`
+        PasswordRepeat string `json:"passwordRepeat"`
+        Name string `json:"name"`
+    }
+)

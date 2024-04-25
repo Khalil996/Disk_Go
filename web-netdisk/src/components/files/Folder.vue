@@ -14,7 +14,7 @@
         <div class="button-group">
           <template v-if="folderButtonsState !== 0">
             <el-button-group>
-              <el-button type="primary" round plain :icon="Download" @click="folderButton(1)">下载
+              <el-button type="primary" round plain :icon="Download" @click="download()">下载
               </el-button>
               <template v-if="folderButtonsState === 1">
                 <el-button type="primary" round plain :icon="EditPen" @click="folderButton(2)">重命名
@@ -43,7 +43,7 @@
               <div class="file-folder-row" @click="router.push(`/file/folder/${scope.row.id}`)">
                 <el-image class="small-pic"
                           src="/src/assets/alt_folder.jpg"
-                          alt="" :fit="'cover'"/>
+                          :fit="'cover'"/>
                 <span style="margin-left: 10px">{{ scope.row.name }}</span>
               </div>
             </template>
@@ -150,11 +150,11 @@ import {
   listFolderMovableFolders,
   moveFolders,
   copyFolders,
-  deleteFolders, listFoldersByParentFolderId
+  deleteFolders, listFoldersByParentFolderId, downloadFolder
 } from "./folder.ts";
 import File from './File.vue'
 import router from "../../router";
-import {codeOk, promptSuccess, Resp} from "../../utils/apis/base.ts";
+import {codeOk, promptError, promptSuccess, Resp} from "../../utils/apis/base.ts";
 import {useFileFolderStore} from "../../store/fileFolder.ts";
 import {typeImage} from "../../utils/constant.ts";
 
@@ -284,6 +284,18 @@ function folderSelectionChange(folders: Folder[]) {
   fileFolderStore.selectChange(folders.map(folder => folder.id), false)
 }
 
+async function download() {
+  const ids = folderTableRef.value!.getSelectionRows().map(folder => folder.id)
+  const resp = await downloadFolder(ids)
+  if (resp.code !== codeOk) {
+    promptError(resp.msg)
+    return
+  }
+  for (const idx in resp.data) {
+    await window.open(resp.data[idx])
+  }
+}
+
 onMounted(() => {
   fileFolderStore.setFolderId(Number.parseInt(props.folderId))
   listFolders()
@@ -309,8 +321,8 @@ onMounted(() => {
 }
 
 .small-pic {
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
   border-radius: 5px;
 }
 </style>

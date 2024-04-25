@@ -1,6 +1,6 @@
 import api from "../utils/apis/request.ts";
 import {Resp} from "../utils/apis/base.ts";
-import {UserInfo} from "../store";
+import {UserInfo} from "@/store";
 
 export interface LoginReq {
     username: string,
@@ -8,7 +8,7 @@ export interface LoginReq {
 }
 
 export interface LoginResp {
-    token: string
+    token: string,
     userInfo: UserInfo
 }
 

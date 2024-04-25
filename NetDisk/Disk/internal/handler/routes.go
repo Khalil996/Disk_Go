@@ -4,6 +4,7 @@ package handler
 import (
 	"net/http"
 
+	admin "cloud_go/Disk/internal/handler/admin"
 	download "cloud_go/Disk/internal/handler/download"
 	file "cloud_go/Disk/internal/handler/file"
 	upload "cloud_go/Disk/internal/handler/upload"
@@ -31,6 +32,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/EmailSend",
 				Handler: EmailSendHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/file/share-info",
+				Handler: getShareInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/user/detail/:id",
+				Handler: getDetailHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/file/share-user/:id",
+				Handler: getUserInfoByShareIdHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/admin/login",
+				Handler: adminLoginHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/file/share-report",
+				Handler: shareReportHandler(serverCtx),
+			},
 		},
 	)
 
@@ -42,11 +68,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/detail",
 					Handler: user.UpdateDetailHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodGet,
-					Path:    "/detail/:id",
-					Handler: user.GetDetailHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -152,6 +173,36 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/delete",
 					Handler: file.ListDeletedFilesHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/share",
+					Handler: file.ListSharesHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share",
+					Handler: file.ShareHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share-folder",
+					Handler: file.ShareFolderHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share-cancel",
+					Handler: file.ShareCancelHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/search",
+					Handler: file.SearchHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/folder-download",
+					Handler: file.DownloadFolderHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithPrefix("/file"),
@@ -208,5 +259,74 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithPrefix("/download"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Auth},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/user-list",
+					Handler: admin.ListUsersHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share-list",
+					Handler: admin.ListSharesAdminHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user-status",
+					Handler: admin.SetUserStatusHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/file-url/:id/:type",
+					Handler: admin.GetUrlHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/file-status",
+					Handler: admin.SetFileStatusHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/info",
+					Handler: admin.GetAdminInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/list",
+					Handler: admin.GetAdminListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/status",
+					Handler: admin.SetAdminStatusHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/share-file/:id",
+					Handler: admin.GetShareInfoAdminHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/share-status",
+					Handler: admin.SetShareStatusHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/add",
+					Handler: admin.AddAdminHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/:id",
+					Handler: admin.DeleteAdminHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/admin"),
 	)
 }
