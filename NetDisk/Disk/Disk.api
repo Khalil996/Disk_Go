@@ -85,6 +85,9 @@ service Disk-api{
 	@handler copyFiles
 	post /copy (CopyFilesReq) returns ()
 	
+	@handler copyFolders
+	post /folder-copy (CopyFoldersReq) returns ()
+	
 	@handler deleteFiles
 	put /delete (DeleteFilesReq) returns ()
 	
@@ -124,6 +127,9 @@ service Disk-api{
 	
 	@handler downloadFolder
 	post /folder-download (DFReq) returns ([]string )
+	
+	@handler downloadCount
+	post /share-cnt/:id (IdPathReq) returns ()
 }
 
 @server(
@@ -208,6 +214,9 @@ service Disk-api {
 	
 	@handler deleteAdmin
 	delete /:id (IdStrReq) returns ()
+	
+	@handler statistic
+	get /statistic () returns ()
 }
 
 type (

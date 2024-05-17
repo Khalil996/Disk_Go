@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// 获取单个文件
 func GetSingleFile(r *http.Request) (*types.FileParam, error) {
 	file, header, err := r.FormFile("file")
 	if err != nil {

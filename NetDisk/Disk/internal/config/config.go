@@ -9,11 +9,12 @@ import (
 
 type Config struct {
 	rest.RestConf
-	Minio  minio.Conf
-	Xorm   xorm.DbConf
-	Redis  redis.Conf
-	Eshost string
-	Idgen  struct {
+	Minio    minio.Conf
+	Xorm     xorm.DbConf
+	Redis    redis.Conf
+	Eshost   string
+	Capacity uint64
+	Idgen    struct {
 		WorkerId uint16
 	}
 	KqPusherConfs []*KqPusherConf

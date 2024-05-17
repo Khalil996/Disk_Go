@@ -172,8 +172,13 @@ async function cancel() {
   }
   console.log(ids)
   const resp = await shareCancel(ids)
-  if (resp.code !== codeOk) {
-    promptError(`取消分享失败，${resp.msg}`)
+  if (resp.code === codeOk) {
+    promptSuccess(`删除分享成功，${resp.msg}`)
+    dialogVisible.option[0] = false // 确保对话框关闭
+    cancelId = '' // 重置 cancelId
+   await listFiles() // 重新加载分享列表
+  } else {
+    promptError(`删除分享失败，${resp.msg}`)
   }
 }
 

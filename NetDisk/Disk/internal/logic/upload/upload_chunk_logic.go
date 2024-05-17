@@ -128,6 +128,11 @@ func (l *UploadChunkLogic) createSchedule(req *types.UploadChunkReq, fileData mu
 			return nil, err
 		}
 
+		if _, err := session.SetExpr("used", "used + "+strconv.FormatInt(size, 10)).
+			ID(userId).Update(&models.UserBasic{}); err != nil {
+			return nil, err
+		}
+
 		if err := l.svcCtx.Minio.NewService().Upload(l.ctx, objectName, fileData); err != nil {
 			l.incr(key, -1)
 			return nil, err

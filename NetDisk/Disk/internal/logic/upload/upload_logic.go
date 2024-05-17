@@ -108,7 +108,12 @@ func (l *UploadLogic) saveAndUpload(fileInfo map[string]string, fileData multipa
 		file.Status = define.StatusFileUploaded
 		file.DelFlag = define.StatusFileUndeleted
 		file.SyncFlag = define.FlagSyncWrite
+
 		if _, err := session.Insert(file); err != nil {
+			return nil, err
+		}
+
+		if _, err := session.SetExpr("used", "used +"+strconv.FormatInt(size, 10)).ID(userId).Update(&models.UserBasic{}); err != nil {
 			return nil, err
 		}
 

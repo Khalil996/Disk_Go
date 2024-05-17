@@ -3,6 +3,8 @@ package redis
 import "time"
 
 const (
+	NetdiskCapacity = "capacity"
+
 	UserLogin      = "user:login:"
 	EmailValidCode = "user:code:"
 	UserInfoKey    = "user:info:"

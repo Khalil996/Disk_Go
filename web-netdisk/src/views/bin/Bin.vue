@@ -55,21 +55,21 @@
               <div>{{ scope.row.src }}</div>
             </template>
           </el-table-column>
-          <el-table-column min-width="100">
-            <template #default="scope">
-                            <span @click="dialogButtons(1); singleSelectedFile=scope.row">
-                                <el-icon color="#48a3ff">
-                                    <RefreshRight/>
-                                </el-icon>
-                            </span>
-              &nbsp;&nbsp;
-              <span @click="dialogButtons(2); singleSelectedFile=scope.row">
-                                <el-icon color="red">
-                                    <Delete/>
-                                </el-icon>
-                            </span>
-            </template>
-          </el-table-column>
+<!--          <el-table-column min-width="100">-->
+<!--            <template #default="scope">-->
+<!--                            <span @click="dialogButtons(1); singleSelectedFile=scope.row">-->
+<!--                                <el-icon color="#48a3ff">-->
+<!--                                    <RefreshRight/>-->
+<!--                                </el-icon>-->
+<!--                            </span>-->
+<!--              &nbsp;&nbsp;-->
+<!--              <span @click="dialogButtons(2); singleSelectedFile=scope.row">-->
+<!--                                <el-icon color="red">-->
+<!--                                    <Delete/>-->
+<!--                                </el-icon>-->
+<!--                            </span>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
         </el-table>
       </div>
     </el-col>
@@ -132,14 +132,10 @@ import {ElTable} from "element-plus";
 import {onMounted, reactive, ref} from "vue";
 import {deleteAllFilesTruly, DeleteFile, deleteFilesTruly, getDeletedFiles, recoverFiles} from "./bin.ts";
 import {
-  Warning,
-  RefreshRight, Delete, DeleteFilled
+  Warning, RefreshRight, Delete, DeleteFilled
 } from "@element-plus/icons-vue";
 import {codeOk, promptError} from "@/utils/apis/base.ts";
 import {formatLeft, formatSize, formatTime} from "@/utils/util.ts";
-import {File} from "@/components/files/file.ts";
-
-
 
 const fileList = reactive<{ data: DeleteFile[] }>({
       data: []
@@ -147,7 +143,7 @@ const fileList = reactive<{ data: DeleteFile[] }>({
     dialogVisible = reactive({option: [false, false, false]}),
     fileTableRef = ref<InstanceType<typeof ElTable>>()
 
-let singleSelectedFile = ref({id:0}),
+let singleSelectedFile = ref({id: 0}),
     selectedFiles: DeleteFile[],
     fileButtonsState = ref(0)
 
@@ -180,7 +176,6 @@ async function listDeletedFiles() {
       if (file.folderId === 0) {
         file.src = '根文件夹'
       }
-      console.log(file.folderId)
     })
   } else {
     promptError(resp.msg)
@@ -198,19 +193,17 @@ async function clearBin() {
 }
 
 async function recoverOrDelete(option: number) {
-  let  resp
-
+  let resp
   if (option === 1) {
     let recoverObj = {fileIds: [], folderIds: []}
     if (singleSelectedFile.value.id === 0 && selectedFiles.length > 0) {
       const m = new Map()
-
       selectedFiles.forEach(file => {
         if (file.folderId !== 0) {
           if (!m.has(file.folderId)) {
             recoverObj.folderIds.push(file.folderId)
           }
-          m.set(file.folderId,0)
+          m.set(file.folderId, 0)
         }
         recoverObj.fileIds.push(file.id)
       })

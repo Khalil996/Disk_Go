@@ -1,16 +1,16 @@
 import api from "../../utils/apis/request.ts";
 import {Resp} from "@/utils/apis/base.ts";
-
 export interface DeleteFile {
     id: number
     name: string
-    folderId?: number
-    folderName?: string
+    folderId: number
+    folderName: string
     delTime: number
     size: number
     delTimeStr?: string
     sizeStr?: string
     left?: string
+    src?: string
 }
 
 export function getDeletedFiles() {

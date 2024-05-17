@@ -24,8 +24,13 @@ type (
     }
 
     CopyFilesReq {
-        FolderId int64 `path:"folderId"`
+        FolderId int64 `json:"folderId"`
         FileIdsStruct
+    }
+
+    CopyFoldersReq {
+        ParentFolderId int64 `json:"parentFolderId"`
+        FolderIdsStruct
     }
 
     DeleteFilesReq {

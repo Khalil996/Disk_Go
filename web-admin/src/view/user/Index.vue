@@ -61,21 +61,21 @@
 
   <el-dialog v-model="dialogVisible[1]" title="封禁选项">
     <el-form label-position="top">
-      <el-radio-group v-model="radio.value" style="display: flex; flex-direction: column; align-items: baseline">
-        <el-radio :value="1" size="large" border style="margin-bottom: 20px">
+      <el-radio-group v-model="radio" style="display: flex; flex-direction: column; align-items: baseline">
+        <el-radio :label="1" size="large" border style="margin-bottom: 20px">
           头像：
           <el-image :src="selectedUser.Avatar" fit="cover"
                     style="width: 30px; height: 30px; border-radius: 5px;"/>
         </el-radio>
-        <el-radio :value="2" size="large" border
+        <el-radio :label="2" size="large" border
                   style="margin-bottom: 20px">
           账号：{{ selectedUser.UserName }}
         </el-radio>
-        <el-radio :value="3" size="large" border
+        <el-radio :label="3" size="large" border
                   style="margin-bottom: 20px">
           昵称：{{ selectedUser.Name }}
         </el-radio>
-        <el-radio :value="4" size="large" border
+        <el-radio :label="4" size="large" border
                   style="margin-bottom: 20px">
           签名：{{ selectedUser.Signature }}
         </el-radio>
@@ -107,7 +107,7 @@ const router = useRouter();
 // 用户数据
 let users = ref([]),
     total = ref(0),
-    radio = ref(0),
+    radio = ref(1),
     selectedUser
 
 // 搜索条件
@@ -135,15 +135,14 @@ function buttonClick(option, user) {
   dialogVisible[option] = true
 }
 
-async function setStatus( radio, idx,status) {
-  const statusValue = Number(status);
+async function setStatus(status, idx, radio) {
   if (radio) {
-    if (radio === 0) {
+    if (status === 0) {
       promptError('请先选择')
       return
     }
   }
-  const resp = await userApi.setStatus(selectedUser.Id, statusValue)
+  const resp = await userApi.setStatus(selectedUser.Id, status)
   if (resp.data.code === codeOk) {
     await getUserList()
     promptSuccess(`设置成功`)

@@ -32,3 +32,5 @@ KqPusherConfs:
       Topic: log_err_netdisk
 
 Eshost: "http://127.0.0.1:9200"
+
+Capacity: 1099511627776

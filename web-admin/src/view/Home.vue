@@ -40,6 +40,12 @@
                    :collapse="isCollapse"
                    :default-openeds="['1']"
           >
+            <el-menu-item index="/log" @click="saveActiveNav('/log')">
+              <el-icon>
+                <Memo/>
+              </el-icon>
+              <span>系统日志</span>
+            </el-menu-item>
             <el-menu-item index="/index" @click="saveActiveNav('/index')">
               <el-icon>
                 <house/>
@@ -58,12 +64,7 @@
               </el-icon>
               <span>分享管理</span>
             </el-menu-item>
-            <el-menu-item index="/log" @click="saveActiveNav('/log')">
-              <el-icon>
-                <Memo/>
-              </el-icon>
-              <span>系统日志</span>
-            </el-menu-item>
+
             <el-menu-item v-if="admin.data.Status === 1"
                           index="/admin" @click="saveActiveNav('/admin')">
               <el-icon>
@@ -149,13 +150,13 @@ const logout = () => {
 }
 
 .el-header {
-  background: linear-gradient(120deg, lightsalmon, wheat, lightsalmon);
+  background: linear-gradient(120deg, #0699f5, #83c6ea, #2dd4f1);
   padding: 0 10px;
   overflow: hidden;
 }
 
 .system-name {
-  color: #fff;
+  color: #b0e6f8;
   font: 800 23px Arial, sans-serif;
   line-height: 100%;
   position: absolute;
@@ -164,12 +165,12 @@ const logout = () => {
 }
 
 .el-aside {
-  background: lightsalmon;
+  background: #23a9f1;
   width: auto !important;
 }
 
 .el-menu-vertical-demo {
-  background-color: lightsalmon;
+  background-color: #1a9fe7;
 }
 
 .el-menu-vertical-demo:not(.el-menu--collapse) {
@@ -188,7 +189,7 @@ const logout = () => {
 }
 
 .toggle-button {
-  background-color: lightyellow;
+  background-color: #2fecdc;
   font-size: 18px;
   line-height: 24px;
   color: #fff;
@@ -208,7 +209,7 @@ const logout = () => {
   color: black !important;
   font-size: 15px;
   font-weight: bold;
-  background-color: lightyellow !important;
+  background-color: #63b7f3 !important;
   border-radius: 2px;
   height: 50px;
   line-height: 50px;

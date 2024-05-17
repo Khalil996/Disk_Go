@@ -34,11 +34,11 @@
 
         <el-table v-if="folderList.arr && folderList.arr.length!=0"
                   ref="folderTableRef"
-                  :data="folderList.arr" style="width: 100%"
+                  :data="folderList.arr" style="width: 100%;max-height:70%"
                   @selection-change="folderSelectionChange"
         >
           <el-table-column type="selection" width="55"/>
-          <el-table-column label="文件夹名" width="180">
+          <el-table-column label="文件夹名" width="200">
             <template #default="scope">
               <div class="file-folder-row" @click="router.push(`/file/folder/${scope.row.id}`)">
                 <el-image class="small-pic"
@@ -48,7 +48,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="修改时间" width="180">
+          <el-table-column label="修改时间" width="280">
             <template #default="scope">
               <div>{{ scope.row.updated }}</div>
             </template>
@@ -92,9 +92,9 @@
     </template>
   </el-dialog>
 
-  <el-dialog v-model="folderCopyAndMoveDialog" title="选择文件夹">
-    <el-table :data="folderMovableFolderList.arr" highlight-current-row>
-      <el-table-column label="" width="180">
+  <el-dialog v-model="folderCopyAndMoveDialog" title="选择文件夹" width="250">
+    <el-table :data="folderMovableFolderList.arr" highlight-current-row width="200">
+      <el-table-column label="文件夹名" width="200">
         <template #default="scope">
           <div style="display: flex; align-items: center">
             <div @click="toFolder( scope.row.id, folderCopyAndMoveFlag)">
@@ -195,6 +195,7 @@ async function toFolder(folderId: number, option: number) {
   }
   if (resp && resp.code === 0) {
     folderMovableFolderList.arr = resp.data
+    listFoldersCurrentFolderId = folderId
   }
 }
 
@@ -248,11 +249,17 @@ async function renameFolder(option: number) {
 
 // 复制/移动请求
 async function folderCopyAndMoveConfirm() {
-  const folderIds = selectedFolders.map(folder => folder.id);
+  let resp
+  const folderIds = selectedFolders.map(folder => folder.id)
   if (folderCopyAndMoveFlag === 3) {
-    await moveFolders(listFoldersCurrentFolderId, folderIds)
+    resp = await moveFolders(listFoldersCurrentFolderId, folderIds)
   } else if (folderCopyAndMoveFlag === 4) {
-    await copyFolders(listFoldersCurrentFolderId, folderIds)
+    resp = await copyFolders(listFoldersCurrentFolderId, folderIds)
+  }
+  if (resp.code === codeOk) {
+    promptSuccess('操作成功！')
+    folderCopyAndMoveDialog.value = false
+    await listFolders()
   }
   listFoldersCurrentFolderId = 0
 }

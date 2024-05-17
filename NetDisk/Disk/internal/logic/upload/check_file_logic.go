@@ -101,7 +101,7 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *models.Fil
 	}
 
 	if file.Id != 0 {
-		if file.Status != define.StatusFileDeleted && file.Status != define.StatusFileNeedMerge {
+		if file.DelFlag != define.StatusFileDeleted && file.Status != define.StatusFileNeedMerge {
 			return nil, errors.New("当前文件夹已存在该文件😈")
 		}
 	}
@@ -131,7 +131,7 @@ func (l *CheckFileLogic) doWhenExist(req *types.CheckFileReq, fileFs *models.Fil
 		file.IsBig = define.BigFileFlag
 	}
 	if _, err := engine.Insert(&file); err != nil {
-		return nil, err
+		return nil, errors.New("文件已存在或在回收站中，请恢复该文件😈")
 	}
 
 	resp.Status = define.StatusFileUploaded

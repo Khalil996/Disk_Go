@@ -94,6 +94,7 @@ var OperationM = map[string]string{
 	"Login":               "账号：%v 登录了",
 	"Upload":              "上传了文件，文件id：%v",
 	"CopyFiles":           "复制文件id：%v",
+	"CopyFolders":         "复制了文件夹，文件夹id：%v",
 	"CreateFolder":        "创建了文件夹，名称：%v",
 	"DeleteAllFilesTruly": "清空了回收站",
 	"DeleteFiles":         "删除了文件，文件id：%v",

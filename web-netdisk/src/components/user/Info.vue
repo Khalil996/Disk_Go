@@ -123,6 +123,7 @@ async function changeAvatar(param: UploadRequestOptions) {
   const resp = await updateAvatar(formData)
   if (resp.code === codeOk) {
     user.data.avatar = resp.data.url
+    await showUserInfo()
     await baseStore.updateUserInfo(user.data, false)
   }
 }

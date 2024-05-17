@@ -34,14 +34,14 @@ export function listFolderMovableFolders(parentFolderId: number, selectedFolderI
 }
 
 export function moveFolders(parentFolderId: number, folderIds: number[]) {
-    return api.put<any, Resp<any>>('/folder-move', {
+    return api.put<any, Resp<any>>('/file/folder-move', {
         'parentFolderId': parentFolderId,
         'folderIds': folderIds
     })
 }
 
 export function copyFolders(parentFolderId: number, folderIds: number[]) {
-    return api.post<any, Resp<any>>('/folder-copy', {
+    return api.post<any, Resp<any>>('/file/folder-copy', {
         'parentFolderId': parentFolderId,
         'folderIds': folderIds
     })

@@ -8,6 +8,7 @@ import (
 	"cloud_go/Disk/models"
 	"context"
 	"errors"
+	"github.com/yitter/idgenerator-go/idgen"
 	"log"
 	"math/rand"
 	"strconv"
@@ -62,6 +63,7 @@ func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterRe
 		Used:     0,
 		Capacity: define.DefaultCapacity,
 	}
+	user.Id = idgen.NextId()
 	n, err := l.svcCtx.Engine.Insert(user)
 	if err != nil {
 		return nil, err

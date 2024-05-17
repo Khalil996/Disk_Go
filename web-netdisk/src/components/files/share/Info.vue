@@ -3,8 +3,12 @@
     <el-row>
 
       <el-col :span="24" v-if="!validated">
-        <div style="position: absolute; left: -20%;color: #adabab;
+        <div style="position: absolute; left: 10%;color: #adabab;
     font: 800 23px Arial, sans-serif; line-height: 100%;">提取文件
+        </div>
+        <div v-if="ownerInfo.data.shareStatus === shareExpired"
+             class="small-zi">
+          当前分享已过期！😣
         </div>
         <div v-if="ownerInfo.data.shareStatus === shareNotExistOrDeleted"
              class="small-zi">
@@ -177,6 +181,7 @@
 import {ElTable} from "element-plus";
 import {onMounted, reactive, ref} from "vue";
 import {
+  downloadCount,
   getOwnerInfoByShareId,
   listFilesByShareId,
   shareCancel,
@@ -191,7 +196,7 @@ import {useRoute} from "vue-router";
 import {codeOk, promptError, promptSuccess} from "@/utils/apis/base.ts";
 import {
   fileStatus,
-  fileStatusMap,
+  fileStatusMap, shareExpired,
   shareIllegal,
   shareNotExistOrDeleted,
   shareNotExpired,
@@ -269,6 +274,7 @@ async function downloadFiles() {
     }
     await window.open(file.url)
   }
+  await  downloadCount(props.shareId)
 }
 
 async function getOwnerInfo() {
@@ -336,7 +342,7 @@ onMounted(async () => {
 }
 
 .form-div {
-  background: rgba(255, 194, 133, 0.5);
+  background: rgba(133, 233, 255, 0.5);
   padding: 10px;
   border: 1px solid lightgray;
   border-radius: 10px;

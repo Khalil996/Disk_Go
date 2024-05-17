@@ -6,6 +6,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as Icons from '@element-plus/icons-vue'
 import commonJs from './assets/js/common'
+ import * as echarts from "echarts"
 import {createPinia} from 'pinia'
 
 const pinia = createPinia()
@@ -15,5 +16,6 @@ for (let i in Icons) {
 }
 app.use(router).use(ElementPlus)
 app.use(pinia)
+ app.use(echarts)
 app.config.globalProperties.$commonJs = commonJs
 app.mount('#app')

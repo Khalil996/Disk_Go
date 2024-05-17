@@ -21,12 +21,12 @@ export const util = () => {
 }
 
 export function formatSize(size) {
-    const units = ['B', 'K', 'M', 'G', 'T', 'P']
+    const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
     while (size > 1024 && units.length > 0) {
         size /= 1024
         units.shift()
     }
-    return (units[0] === 'B' ? size : size.toFixed(2)) + units[0]
+    return (units[0] === 'B' ? size : size.toFixed(2)) + ' ' + units[0]
 }
 
 export function formatLeft(expiration) {
@@ -78,15 +78,3 @@ export function formatState(expired) {
     return formatLeft(expired) + '后过期'
 }
 
-// export async function sendCode2Email(email) {
-//     const resp = await sendCode(email)
-//     if (resp.code === 0) {
-//         promptSuccess('验证码已发送至邮件😊')
-//     }
-// }
-
-// export function sendCode(email) {
-//     return api.post("/code", {
-//         'email': email
-//     })
-// }

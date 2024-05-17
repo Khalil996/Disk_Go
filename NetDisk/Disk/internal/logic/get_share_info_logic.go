@@ -69,5 +69,12 @@ func (l *GetShareInfoLogic) GetShareInfo(req *types.GetShareInfoReq) (resp *type
 			Status:  file.Status,
 		})
 	}
+
+	if _, err := l.svcCtx.Engine.Where("id = ?", req.Id).
+		SetExpr("click_num", "click_num + 1").
+		Update(&models.Share{}); err != nil {
+		logx.Errorf("获取分享列表，更新点击次数失败，ERR: [%v]", err)
+	}
+
 	return resp, nil
 }

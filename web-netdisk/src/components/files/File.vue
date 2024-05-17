@@ -34,7 +34,7 @@
 
         <el-table v-if="fileList && fileList.data.length!=0"
                   ref="fileTableRef"
-                  :data="fileList.data" style="width: 100%"
+                  :data="fileList.data" style="width: 100%;max-height: 570px; overflow-y: auto;"
                   @selection-change="fileSelectionChange"
         >
           <el-table-column type="selection" width="55"/>
@@ -91,17 +91,16 @@
     </template>
   </el-dialog>
 
-  <el-dialog v-model="fileCopyAndMoveDialog" title="选择文件夹">
-    <el-table :data="fileMovableFolderList.data" highlight-current-row>
-      <el-table-column label="" width="180">
+  <el-dialog v-model="fileCopyAndMoveDialog" title="选择文件夹" width="250">
+    <el-table :data="fileMovableFolderList.data" highlight-current-row width="200">
+      <el-table-column label="文件夹名" width="200">
         <template #default="scope">
-          <div style="display: flex; align-items: center">
-            <div @click="toFolder( scope.row.id)">
-              <el-icon>
-                <FolderOpened/>
-              </el-icon>
-              <span style="margin-left: 10px">{{ scope.row.name }}</span>
-            </div>
+          <div @click="toFolder( scope.row.id)"
+               style="display: flex; align-items: center">
+            <el-icon>
+              <FolderOpened/>
+            </el-icon>
+            <span style="margin-left: 10px">{{ scope.row.name }}</span>
           </div>
         </template>
       </el-table-column>
@@ -116,7 +115,7 @@
     </template>
   </el-dialog>
 
-  <el-dialog v-model="fileDialogVisible[4]" title="分享文件">
+  <el-dialog v-model="fileDialogVisible[4]" title="分享文件" width="500">
 
     <el-form label-position="left">
       <el-form-item>
@@ -300,6 +299,7 @@ async function fileCopyAndMoveConfirm() {
     promptSuccess()
     fileCopyAndMoveDialog.value = false
     listFoldersCurrentFolderId = 0
+    await listFiles()
   }
 }
 
@@ -336,6 +336,15 @@ async function download(files: File[]) {
       continue
     }
     await window.open(file.url)
+   //  // 创建a标签
+   //  setTimeout(() => {
+   //    const a = document.createElement('a');
+   //    a.href = file.url;
+   //    a.download = file.name || 'download';
+   //    document.body.appendChild(a);
+   //    a.click();
+   //    document.body.removeChild(a);
+   //  }, 10000);
   }
 }
 
@@ -386,4 +395,6 @@ onMounted(() => {
   height: 40px;
   border-radius: 5px;
 }
+
+
 </style>

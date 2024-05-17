@@ -51,11 +51,8 @@ async function handleUpload(param: UploadRequestOptions) {
           param.file.size > uploadConst.shardingFloor &&
           res.confirmShard == uploadConst.shardConfirmed
       ) {
-        console.log(1111111)
         await uploadSlice(param.file, res.fileId, res.hash)
       } else {
-        console.log(22222222)
-
         await uploadSingle(param.file, res.fileId)
       }
     } else {
@@ -66,30 +63,33 @@ async function handleUpload(param: UploadRequestOptions) {
     promptError('请检查文件是否合法！')
   }
 }
+function getExtension(filename) {
+  const lastDotPosition = filename.lastIndexOf('.');
+  return (lastDotPosition > 0) ? filename.substring(lastDotPosition + 1) : '';
+}
+  async function checkBeforeUpload(file: UploadRawFile) {
+    const md5 = await genMd5(file);
+    const resp = await checkFile({
+      folderId: fileFolderStore.folderId,
+      name: file.name,
+      size: file.size,
+      ext: getExtension(file.name),
+      hash: md5
+    })
 
-async function checkBeforeUpload(file: UploadRawFile) {
-  const md5 = await genMd5(file);
-  const resp = await checkFile({
-    folderId: fileFolderStore.folderId,
-    name: file.name,
-    size: file.size,
-    ext: file.name.substring(file.name.lastIndexOf('.')),
-    hash: md5
-  })
-
-  const res = {
-    success: true,
-    fileId: resp.data.fileId,
-    status: resp.data.status,
-    confirmShard: resp.data.confirmShard,
-    hash: md5
-  }
-  if (resp && resp.code === codeOk) {
+    const res = {
+      success: true,
+      fileId: resp.data.fileId,
+      status: resp.data.status,
+      confirmShard: resp.data.confirmShard,
+      hash: md5
+    }
+    if (resp && resp.code === codeOk) {
+      return res
+    }
+    res.success = false
     return res
   }
-  res.success = false
-  return res
-}
 
 async function uploadSingle(file: UploadRawFile, fileId: number) {
   const formData = new FormData();
